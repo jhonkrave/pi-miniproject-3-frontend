@@ -1,4 +1,5 @@
 // Pages/Home.tsx
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.scss";
@@ -37,11 +38,15 @@ const Home: React.FC = () => {
         {/* ▬▬▬▬▬ SIDEBAR ▬▬▬▬▬ */}
         <aside className="sidebar">
           <div className="sidebar-header">
-            <img
-              src="/Imagenes/logo.png"
-              alt="TeamLink"
-              className="logo-img"
-            />
+            {/* Contenedor principal con logo y nombre de la app (ajustar si es necesario) */}
+             <div className="logo-container">
+                <img
+                    // ⭐⭐ CAMBIAR RUTA DE LA IMAGEN SI ES NECESARIO ⭐⭐
+                    src="/Imagenes/TeamLink-Logo-White.png" 
+                    alt="TeamLink"
+                    className="logo-img"
+                />
+             </div>
           </div>
 
           <nav className="sidebar-nav">
@@ -74,11 +79,20 @@ const Home: React.FC = () => {
 
             {/* Icono grande */}
             <div className="content-header">
-              <div className="big-icon">🎥</div>
+              {/* ⭐⭐ REEMPLAZAR EL ICONO POR EL DE LA MAQUETA ⭐⭐ */}
+              <div className="big-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" fill="white" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M14.5 16.5V11.5L9.5 8.5V13.5L14.5 16.5ZM14.5 16.5L19.5 13.5V8.5L14.5 5.5V10.5L19.5 13.5Z" fill="#1B2A41" stroke="#1B2A41" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+                    <rect x="7" y="10" width="10" height="7" rx="1.5" fill="#1B2A41"/>
+                    <path d="M8 12.5L16 12.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
             </div>
 
-            {/* Botones */}
+            {/* Botones y Formulario de Ingreso */}
             <div className="actions-grid">
+              
               <div className="action-card create-meeting-card">
                 <button
                   className="card-btn primary-btn"
@@ -108,8 +122,9 @@ const Home: React.FC = () => {
 
             {/* Sección de reuniones */}
             <section className="meetings-section">
-              <h2 className="meetings-title">Reuniones</h2>
+              {/* Se eliminó el h2, el estilo en SCSS lo oculta */}
 
+              {/* REUNIÓN DE EQUIPO 1 */}
               <article className="meeting-card">
                 <h3 className="meeting-card__title">REUNIÓN DE EQUIPO</h3>
 
@@ -120,7 +135,7 @@ const Home: React.FC = () => {
                     <p>9:20 AM</p>
                   </div>
                   <div>
-                    <p className="meeting-card__label">Fecha y hora de creación:</p>
+                    <p className="meeting-card__label">Fecha y hora creación:</p>
                     <p>08-Nov-2025</p>
                     <p>1:00 PM</p>
                   </div>
@@ -139,6 +154,7 @@ const Home: React.FC = () => {
                 </div>
               </article>
 
+              {/* REUNIÓN DE EQUIPO 2 */}
               <article className="meeting-card">
                 <h3 className="meeting-card__title">REUNIÓN DE EQUIPO</h3>
 
@@ -149,7 +165,7 @@ const Home: React.FC = () => {
                     <p>5:00 PM</p>
                   </div>
                   <div>
-                    <p className="meeting-card__label">Fecha y hora de creación:</p>
+                    <p className="meeting-card__label">Fecha y hora creación:</p>
                     <p>16-Nov-2025</p>
                     <p>6:00 PM</p>
                   </div>
@@ -167,6 +183,34 @@ const Home: React.FC = () => {
                   <button className="meeting-card__btn">Acceder</button>
                 </div>
               </article>
+              
+              {/* Más Reuniones para demostración del scroll */}
+              <article className="meeting-card">
+                <h3 className="meeting-card__title">REUNIÓN DE VENTAS</h3>
+                <div className="meeting-card__row">
+                  <div>
+                    <p className="meeting-card__label">Fecha y hora de inicio:</p>
+                    <p>25-Nov-2025</p>
+                    <p>11:00 AM</p>
+                  </div>
+                  <div>
+                    <p className="meeting-card__label">Fecha y hora creación:</p>
+                    <p>22-Nov-2025</p>
+                    <p>9:00 AM</p>
+                  </div>
+                  <div>
+                    <p className="meeting-card__label">ID:</p>
+                    <p>9012345</p>
+                  </div>
+                </div>
+                <p className="meeting-card__description">
+                  Descripción: Revisión de métricas del trimestre y planificación de estrategias.
+                </p>
+                <div className="meeting-card__actions">
+                  <button className="meeting-card__btn">Acceder</button>
+                </div>
+              </article>
+              
             </section>
           </div>
         </main>

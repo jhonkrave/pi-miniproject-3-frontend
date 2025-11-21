@@ -1,5 +1,5 @@
-// Pages/ModalCrearReunion.tsx
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./ModalCrearReunion.scss";
 
 export interface ReunionData {
@@ -18,6 +18,7 @@ const ModalCrearReunion: React.FC<ModalCrearReunionProps> = ({
   onClose,
   onCreate,
 }) => {
+  const navigate = useNavigate();
   const [titulo, setTitulo] = useState("");
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
@@ -26,34 +27,36 @@ const ModalCrearReunion: React.FC<ModalCrearReunionProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    onCreate({
+    const reunionData = {
       titulo,
       fecha,
       hora,
       descripcion,
-    });
+    };
 
-    // Opcional: limpiar campos
-    setTitulo("");
-    setFecha("");
-    setHora("");
-    setDescripcion("");
-
+    onCreate(reunionData);
+    
+    // Navegar a la pantalla de HostMeeting
+    navigate("/host-meeting");
+    
     onClose();
   };
 
   return (
     <div className="crear-modal-overlay">
       <div className="crear-modal">
-        <h2 className="crear-modal__title">Crear reunión</h2>
+        <h2 className="crear-modal__title">CREAR REUNIÓN</h2>
+        <p className="crear-modal__subtitle">
+          Complete el formulario para crear una nueva Reunión
+        </p>
 
         <form className="crear-modal__form" onSubmit={handleSubmit}>
           <label className="crear-modal__label">
-            Nombre de la reunión
+            <span className="crear-modal__label-text">📋 Título de la reunión:</span>
             <input
               type="text"
               className="crear-modal__input"
-              placeholder="Ej: Reunión de seguimiento"
+              placeholder="Escriba el título de la reunión"
               value={titulo}
               onChange={(e) => setTitulo(e.target.value)}
               required
@@ -62,7 +65,7 @@ const ModalCrearReunion: React.FC<ModalCrearReunionProps> = ({
 
           <div className="crear-modal__row">
             <label className="crear-modal__label">
-              Fecha
+              <span className="crear-modal__label-text">📅 Fecha de inicio:</span>
               <input
                 type="date"
                 className="crear-modal__input"
@@ -73,7 +76,7 @@ const ModalCrearReunion: React.FC<ModalCrearReunionProps> = ({
             </label>
 
             <label className="crear-modal__label">
-              Hora
+              <span className="crear-modal__label-text">⏰ Hora de inicio:</span>
               <input
                 type="time"
                 className="crear-modal__input"
@@ -85,30 +88,32 @@ const ModalCrearReunion: React.FC<ModalCrearReunionProps> = ({
           </div>
 
           <label className="crear-modal__label">
-            Descripción
+            <span className="crear-modal__label-text">📝 Descripción:</span>
             <textarea
               className="crear-modal__textarea"
               rows={3}
-              placeholder="Añade una breve descripción"
+              placeholder="¡Descríbela!"
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
               required
             />
           </label>
 
+          <div className="crear-modal__divider"></div>
+
           <div className="crear-modal__buttons">
             <button
               type="button"
-              className="crear-modal__btn crear-modal__btn--secondary"
+              className="crear-modal__btn crear-modal__btn--cancel"
               onClick={onClose}
             >
-              Cancelar
+              CANCELAR
             </button>
             <button
               type="submit"
-              className="crear-modal__btn crear-modal__btn--primary"
+              className="crear-modal__btn crear-modal__btn--create"
             >
-              Crear
+              CREAR
             </button>
           </div>
         </form>

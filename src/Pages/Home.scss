@@ -1,13 +1,13 @@
 // Pages/Home.scss
 
 // Colores base (muy parecido al login)
-$azul-oscuro: #1b2a41;
+$azul-oscuro: #a3cef1;
 $azul-medio: #274c77;
 $azul-claro: #a3cef1;
 $azul-card: #23436d;
 $fondo-general: #e5f1ff; // gris azulado de fondo
 $blanco: #ffffff;
-$gris-card: #f2f3f7;
+$gris-card: #a3cef1;
 
 @mixin button-base {
   border-radius: 12px;
@@ -34,20 +34,22 @@ $gris-card: #f2f3f7;
 /* === 2. RECTÁNGULO CENTRAL (tamaño y centrado parecido al login) === */
 
 .home-frame {
+  width: 200%;
+  max-width: 1300px;
+  min-height: 600px;
+  height: 85vh;
+
+  margin: 0 auto;       // ⭐ centra horizontalmente SIN absolute
+  margin-top: 4vh;      // ⭐ centra verticalmente de forma segura
+
   display: flex;
-  width: 90%;              // igual patrón que login-wrapper
-  max-width: 1200px;       // igual que login
-  height: 85vh;            // alto relativo a la pantalla
-  min-height: 600px;       // mismo mínimo que login
-  background: #dfe9ff;     // fondo interno del home
-  border-radius: 20px;     // igual radio que login
+  background: #dfe9ff;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2); // igual intensidad que login
-  position: absolute;      // centrado absoluto como login-wrapper
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
+
+
 
 /* === 3. SIDEBAR DENTRO DEL RECTÁNGULO === */
 
