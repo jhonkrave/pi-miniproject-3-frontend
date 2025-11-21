@@ -1,0 +1,453 @@
+// Pages/Home.scss - Ancho igual al Login
+
+// =============================================
+// ⭐ VARIABLES DE COLOR (Coherencia con Login) ⭐
+// =============================================
+
+$azul-oscuro: #1B2A41;
+$azul-medio: #274C77;
+$azul-claro: #A3CEF1;
+$azul-texto: #1B2A41;
+$gris-borde: #A3CEF1;
+$gris-texto: #6D6D6D;
+$blanco: #FFFFFF;
+
+// ⭐ COLORES ESPECÍFICOS DEL DISEÑO ⭐
+$fondo-principal-gris: #E5F1FF;
+$sidebar-separador: #7fa9c9;
+$input-fondo-gris: rgba(70, 102, 147, 0.5);
+$input-texto-color: #1A1A1A;
+
+// =============================================
+// MIXINS Y UTILIDADES
+// =============================================
+
+@mixin button-base {
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+// =============================================
+// SECCIÓN 1: ESTRUCTURA PRINCIPAL - MÁS ANCHA
+// =============================================
+
+.home-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background: $fondo-principal-gris; 
+  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+  width: 100%;
+}
+
+// =============================================
+// SECCIÓN 2: SIDEBAR - MÁS ANCHO
+// =============================================
+
+.sidebar {
+  width: 350px; // Más ancho para igualar proporciones del Login
+  background: $azul-claro; 
+  border-right: none; 
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header {
+  margin-bottom: 0;
+  padding: 2.5rem 2rem 1.5rem; // Más padding
+  background: $azul-oscuro;
+}
+
+.logo {
+  color: $blanco;
+  font-size: 2rem; // Más grande
+  font-weight: 700;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-shadow: none;
+  margin: 0;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0 0;
+  border-top: 1px solid $sidebar-separador; 
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 1.2rem 2rem; // Más padding
+  margin: 0;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: $azul-oscuro;
+  border-left: 6px solid transparent;
+  font-size: 16px;
+  
+  &:hover {
+    background: rgba($azul-oscuro, 0.1); 
+    transform: none;
+  }
+  
+  &.active {
+    background: $blanco;
+    border-left: 6px solid $azul-oscuro; 
+    box-shadow: none;
+    font-weight: 600;
+  }
+}
+
+.nav-icon {
+  font-size: 1.4rem;
+  margin-right: 1.2rem;
+  width: 28px;
+  text-align: center;
+}
+
+.nav-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 0 2rem 2.5rem 2rem;
+}
+
+.logout-btn {
+  @include button-base;
+  width: 100%;
+  height: 50px; // Más alto
+  background: $azul-oscuro; 
+  color: $blanco;
+  font-weight: 600;
+  font-size: 16px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  
+  &:hover {
+    background: darken($azul-oscuro, 8%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+  }
+}
+
+// =============================================
+// SECCIÓN 3: MAIN CONTENT - MUCHO MÁS AMPLIO
+// =============================================
+
+.main-content {
+  flex: 1;
+  padding: 4rem 5rem; // Mucho más padding para mayor amplitud
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: calc(100% - 350px); // Ancho calculado para igualar proporciones
+}
+
+.content-header {
+  text-align: center;
+  margin-bottom: 4rem; // Más espacio
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.welcome-title, .welcome-subtitle {
+  display: none;
+}
+
+.big-icon {
+  font-size: 5rem; // Mucho más grande
+  color: $azul-medio;
+  margin-bottom: 2rem;
+}
+
+// =============================================
+// SECCIÓN 4: ACCIONES - MUCHO MÁS AMPLIAS
+// =============================================
+
+.actions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem; // Más espacio
+  max-width: 600px; // Ancho máximo aumentado
+  width: 100%;
+  margin: 0 auto;
+  flex: none;
+}
+
+.action-card {
+  background: none;
+  backdrop-filter: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  text-align: center;
+  transition: none;
+}
+
+.card-title, .card-description {
+  display: none;
+}
+
+// Botón de Crear Reunión - MUCHO MÁS GRANDE
+.create-meeting-card {
+  .card-btn {
+    @include button-base;
+    width: 100%;
+    height: 60px; // Mucho más alto
+    font-size: 18px; // Texto más grande
+    font-weight: 700;
+    background: $azul-medio;
+    color: $blanco;
+    box-shadow: 0 5px 20px rgba($azul-medio, 0.4);
+    border-radius: 12px;
+
+    &:hover {
+      background: darken($azul-medio, 10%);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba($azul-medio, 0.5);
+    }
+  }
+}
+
+// Formulario de Unirse - MUCHO MÁS AMPLIO
+.join-form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 15px; // Más espacio
+  margin-top: 0;
+
+  .input-group {
+    width: auto;
+    flex-grow: 1;
+    margin-bottom: 0;
+  }
+}
+
+.meeting-input {
+  width: 100%;
+  padding: 1rem 1.5rem; // Más padding
+  border: 2px solid $gris-borde; 
+  border-radius: 12px;
+  font-size: 16px;
+  background: $input-fondo-gris; 
+  color: $input-texto-color;
+  height: 60px; // Misma altura que botones
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: $azul-medio;
+    background: rgba(70, 102, 147, 0.7);
+    box-shadow: 0 5px 15px rgba(70, 102, 147, 0.3);
+  }
+}
+
+.join-meeting-card {
+  .card-btn.secondary-btn {
+    height: 60px; // Misma altura
+    width: 160px; // Más ancho
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    background: $azul-claro;
+    color: $azul-texto; 
+    border: none;
+    white-space: nowrap;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    
+    &:hover {
+      background: darken($azul-claro, 12%);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+// =============================================
+// SECCIÓN 5: SOCIAL FOOTER - ELIMINADO
+// =============================================
+
+.social-footer {
+  display: none; // Eliminamos completamente los iconos sociales
+}
+
+// =============================================
+// SECCIÓN 6: RESPONSIVE
+// =============================================
+
+@media (max-width: 1200px) {
+  .sidebar {
+    width: 320px;
+  }
+  
+  .main-content {
+    width: calc(100% - 320px);
+    padding: 3rem 4rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 300px;
+  }
+  
+  .main-content {
+    width: calc(100% - 300px);
+    padding: 3rem;
+  }
+  
+  .actions-grid {
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-wrapper {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    padding: 0;
+  }
+
+  .sidebar-header {
+    padding: 2rem 1.5rem 1rem;
+  }
+  
+  .sidebar-nav ul {
+    display: flex;
+    justify-content: space-around;
+    border-top: none;
+    padding: 1rem 0;
+  }
+  
+  .nav-item {
+    flex-direction: column;
+    padding: 1rem 0.5rem;
+    border-left: none;
+    border-bottom: 5px solid transparent;
+    
+    &.active {
+      background: none;
+      border-left: none;
+      border-bottom: 5px solid $azul-oscuro;
+    }
+  }
+
+  .nav-icon {
+    margin-right: 0;
+    font-size: 1.3rem;
+  }
+
+  .nav-text {
+    font-size: 0.9rem;
+    margin-top: 5px;
+  }
+
+  .sidebar-footer {
+    padding: 1.5rem;
+  }
+
+  .logout-btn {
+    height: 50px;
+    font-size: 16px;
+  }
+  
+  .main-content {
+    width: 100%;
+    padding: 3rem 2rem;
+    min-height: 70vh;
+    justify-content: flex-start;
+    padding-top: 3rem;
+  }
+  
+  .actions-grid {
+    width: 100%;
+    max-width: 450px;
+    gap: 2rem;
+  }
+  
+  .join-form {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .join-meeting-card .card-btn.secondary-btn {
+    width: 100%;
+    height: 55px;
+  }
+  
+  .create-meeting-card .card-btn {
+    height: 55px;
+    font-size: 16px;
+  }
+  
+  .meeting-input {
+    height: 55px;
+    font-size: 15px;
+  }
+  
+  .big-icon {
+    font-size: 4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-header {
+    padding: 1.5rem 1rem 0.8rem;
+  }
+  
+  .logo {
+    font-size: 1.8rem;
+  }
+  
+  .main-content {
+    padding: 2rem 1rem;
+  }
+  
+  .actions-grid {
+    max-width: 350px;
+  }
+  
+  .big-icon {
+    font-size: 3.5rem;
+  }
+  
+  .meeting-input {
+    font-size: 14px;
+    padding: 0.9rem 1.2rem;
+  }
+  
+  .create-meeting-card .card-btn,
+  .join-meeting-card .card-btn.secondary-btn {
+    font-size: 15px;
+  }
+}

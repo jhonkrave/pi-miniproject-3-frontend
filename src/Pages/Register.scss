@@ -1,0 +1,332 @@
+// ================================
+// 🎨 VARIABLES DE COLORES
+// ================================
+$azul-oscuro: #1B2A41;
+$azul-medio: #274C77;
+$azul-claro: #A3CEF1;
+$azul-boton: #A3CEF1;
+$azul-texto: #1B2A41;
+$azul-fondo: #E5F1FF;
+$gris-card: rgba(223, 220, 220, 0.95);
+$gris-oscuro: #1A1A1A;
+$gris-texto: #6D6D6D;
+$gris-placeholder: #9A9A9A;
+$gris-borde: #A3CEF1;
+$blanco: #FFFFFF;
+$azul-input: #466693;
+$azul-input-focus: #3A5680;
+
+
+// ================================
+// ⭐ MIXIN BOTONES
+// ================================
+@mixin button-base {
+  width: 100%;
+  height: 38px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+
+// ================================
+// 📌 RESET
+// ================================
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden;
+  background: $azul-fondo;
+  min-height: 100vh;
+  position: relative;
+}
+
+
+// ================================
+// 🖥️ CONTENEDOR PRINCIPAL
+// → COPIADO DEL LOGIN (FUNCIONA PERFECTO)
+// ================================
+.register-wrapper {
+  display: flex;
+  width: 90%;
+  max-width: 1200px;
+  height: 85vh;
+  min-height: 600px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  background: $blanco;
+
+  @media (max-width: 768px) {
+    width: 95%;
+    height: auto;
+    min-height: 100vh;
+    flex-direction: column;
+    position: static;
+    transform: none;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0 auto;
+  }
+}
+
+
+// ================================
+// 📸 COLUMNA IZQUIERDA (MISMA DEL LOGIN)
+// ================================
+.register-image-section {
+  width: 50%;
+  height: 100%;
+  background: $azul-medio;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 35vh;
+  }
+}
+
+.image-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.background-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+// ================================
+// 🧩 COLUMNA DERECHA FORMULARIO
+// → ⭐ SOLUCIÓN FINAL: scroll únicamente aquí
+// ================================
+.register-form-section {
+  width: 50%;
+  height: 100%;
+  padding: 25px 45px;
+  background: linear-gradient(135deg, #1B2A41 0%, #274C77 50%, #A3CEF1 100%);
+  display: flex;
+  align-items: flex-start; // ⭐ SE PEGA ARRIBA PARA NO CORTARSE
+  justify-content: center;
+  overflow-y: auto;  // ⭐ SCROLL SOLO AQUÍ → SOLUCIÓN DEFINITIVA
+  overflow-x: hidden;
+
+  // scrollbar suave
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.4) transparent;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: auto;
+    padding: 30px 40px;
+    overflow-y: auto;
+  }
+
+  @media (max-width: 480px) {
+    padding: 20px 30px;
+  }
+}
+
+
+// ================================
+// 🪟 TARJETA GLASSMORPHISM
+// ================================
+.register-form-card {
+  width: 350px;
+  background: $gris-card;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+
+// ================================
+// 🔷 ICONO SUPERIOR
+// ================================
+.user-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+
+  .icon-container {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: $azul-medio;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 8px rgba(39, 76, 119, 0.3);
+  }
+}
+
+
+// ================================
+// 📝 TÍTULOS
+// ================================
+.register-title {
+  color: $gris-oscuro;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.register-subtitle {
+  color: $gris-texto;
+  font-size: 12px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+
+// ================================
+// ✏️ FORMULARIO / INPUTS
+// ================================
+.register-form {
+
+  .name-fields {
+    display: flex;
+    gap: 8px;
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+    }
+  }
+
+  .input-group {
+    margin-bottom: 10px;
+  }
+
+  .input-label {
+    font-size: 11px;
+    color: $gris-oscuro;
+    display: flex;
+    gap: 6px;
+    margin-bottom: 3px;
+  }
+
+  .form-input {
+    width: 100%;
+    height: 38px;
+    border-radius: 10px;
+    padding: 0 12px;
+    border: 2px solid $gris-borde;
+    background: rgba(70, 102, 147, 0.5);
+    color: white;
+    font-size: 12px;
+    transition: 0.2s ease;
+
+    &::placeholder {
+      color: white;
+    }
+
+    &:focus {
+      border-color: $azul-input-focus;
+      background: rgba(70, 102, 147, 0.7);
+    }
+  }
+
+  // Contraseñas con botón
+  .password-container {
+    position: relative;
+
+    .password-input {
+      padding-right: 38px;
+    }
+
+    .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      font-size: 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+  }
+}
+
+
+// ================================
+// 🔘 BOTONES
+// ================================
+.btn {
+  @include button-base;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &-primary {
+    background: $azul-boton;
+    color: $azul-texto;
+  }
+
+  &-google,
+  &-microsoft {
+    background: $blanco;
+    border: 1px solid $gris-borde;
+    color: $gris-oscuro;
+  }
+}
+
+
+// ================================
+// 🌐 SEPARADOR
+// ================================
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+  font-size: 11px;
+  color: $gris-texto;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: $gris-borde;
+  }
+}
+
+
+// ================================
+// 🔗 ENLACE LOGIN
+// ================================
+.login-link {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 11px;
+  color: $gris-texto;
+
+  a {
+    color: #2A4A6F;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover { text-decoration: underline; }
+  }
+}
