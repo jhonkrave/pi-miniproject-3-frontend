@@ -1,453 +1,472 @@
-// Pages/Home.scss - Ancho igual al Login
+// Pages/Home.scss
 
-// =============================================
-// ⭐ VARIABLES DE COLOR (Coherencia con Login) ⭐
-// =============================================
-
-$azul-oscuro: #1B2A41;
-$azul-medio: #274C77;
-$azul-claro: #A3CEF1;
-$azul-texto: #1B2A41;
-$gris-borde: #A3CEF1;
-$gris-texto: #6D6D6D;
-$blanco: #FFFFFF;
-
-// ⭐ COLORES ESPECÍFICOS DEL DISEÑO ⭐
-$fondo-principal-gris: #E5F1FF;
-$sidebar-separador: #7fa9c9;
-$input-fondo-gris: rgba(70, 102, 147, 0.5);
-$input-texto-color: #1A1A1A;
-
-// =============================================
-// MIXINS Y UTILIDADES
-// =============================================
+// Colores base (muy parecido al login)
+$azul-oscuro: #1b2a41;
+$azul-medio: #274c77;
+$azul-claro: #a3cef1;
+$azul-card: #23436d;
+$fondo-general: #e5f1ff; // gris azulado de fondo
+$blanco: #ffffff;
+$gris-card: #f2f3f7;
 
 @mixin button-base {
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 14px;
   font-weight: 600;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
   border: none;
+  transition: all 0.2s ease;
 }
 
-// =============================================
-// SECCIÓN 1: ESTRUCTURA PRINCIPAL - MÁS ANCHA
-// =============================================
+/* === 1. FONDO GENERAL (márgenes grises, igual login) === */
 
-.home-wrapper {
-  display: flex;
+.home-page {
   min-height: 100vh;
-  background: $fondo-principal-gris; 
-  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  overflow: hidden;
-  width: 100%;
+  background: $fondo-general;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  position: relative; // para centrar el frame como en login
 }
 
-// =============================================
-// SECCIÓN 2: SIDEBAR - MÁS ANCHO
-// =============================================
+/* === 2. RECTÁNGULO CENTRAL (tamaño y centrado parecido al login) === */
+
+.home-frame {
+  display: flex;
+  width: 90%;              // igual patrón que login-wrapper
+  max-width: 1200px;       // igual que login
+  height: 85vh;            // alto relativo a la pantalla
+  min-height: 600px;       // mismo mínimo que login
+  background: #dfe9ff;     // fondo interno del home
+  border-radius: 20px;     // igual radio que login
+  overflow: hidden;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2); // igual intensidad que login
+  position: absolute;      // centrado absoluto como login-wrapper
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* === 3. SIDEBAR DENTRO DEL RECTÁNGULO === */
 
 .sidebar {
-  width: 350px; // Más ancho para igualar proporciones del Login
-  background: $azul-claro; 
-  border-right: none; 
-  padding: 0;
+  width: 320px;
+  background: linear-gradient(180deg, $azul-oscuro, $azul-medio);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+  color: $blanco;
 }
 
 .sidebar-header {
-  margin-bottom: 0;
-  padding: 2.5rem 2rem 1.5rem; // Más padding
-  background: $azul-oscuro;
+  padding: 2.5rem 2rem 1.5rem;
 }
 
-.logo {
-  color: $blanco;
-  font-size: 2rem; // Más grande
-  font-weight: 700;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-shadow: none;
-  margin: 0;
+.logo-img {
+  height: 150px;
+  object-fit: contain;
+  display: block;
 }
 
 .sidebar-nav ul {
   list-style: none;
   padding: 0;
-  margin: 1.5rem 0 0 0;
-  border-top: 1px solid $sidebar-separador; 
+  margin: 1.5rem 0 0;
+  border-top: 1px solid rgba(163, 206, 241, 0.6);
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  padding: 1.2rem 2rem; // Más padding
-  margin: 0;
-  border-radius: 0;
+  padding: 1.1rem 2rem;
+  color: $blanco;
   cursor: pointer;
-  transition: all 0.2s ease;
-  color: $azul-oscuro;
-  border-left: 6px solid transparent;
-  font-size: 16px;
-  
+  border-left: 5px solid transparent;
+  font-size: 15px;
+
   &:hover {
-    background: rgba($azul-oscuro, 0.1); 
-    transform: none;
+    background: rgba(0, 0, 0, 0.1);
   }
-  
+
   &.active {
     background: $blanco;
-    border-left: 6px solid $azul-oscuro; 
-    box-shadow: none;
-    font-weight: 600;
+    color: $azul-oscuro;
+    border-left-color: $azul-oscuro;
   }
 }
 
 .nav-icon {
-  font-size: 1.4rem;
-  margin-right: 1.2rem;
-  width: 28px;
-  text-align: center;
+  margin-right: 0.8rem;
+  font-size: 1.3rem;
 }
 
 .nav-text {
-  font-size: 1.1rem;
   font-weight: 500;
 }
 
 .sidebar-footer {
   margin-top: auto;
-  padding: 0 2rem 2.5rem 2rem;
+  padding: 2rem;
 }
 
 .logout-btn {
   @include button-base;
   width: 100%;
-  height: 50px; // Más alto
-  background: $azul-oscuro; 
+  height: 48px;
+  background: #d9534f;
   color: $blanco;
-  font-weight: 600;
-  font-size: 16px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-  
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+
   &:hover {
-    background: darken($azul-oscuro, 8%);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+    background: darken(#d9534f, 8%);
+    transform: translateY(-1px);
   }
 }
 
-// =============================================
-// SECCIÓN 3: MAIN CONTENT - MUCHO MÁS AMPLIO
-// =============================================
+/* === 4. CONTENIDO PRINCIPAL === */
 
 .main-content {
   flex: 1;
-  padding: 4rem 5rem; // Mucho más padding para mayor amplitud
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  width: calc(100% - 350px); // Ancho calculado para igualar proporciones
+  align-items: flex-start;
+  padding: 3rem 4rem;
+}
+
+.content-inner {
+  width: 100%;
+  max-width: 800px;
 }
 
 .content-header {
-  text-align: center;
-  margin-bottom: 4rem; // Más espacio
   display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.welcome-title, .welcome-subtitle {
-  display: none;
-}
-
-.big-icon {
-  font-size: 5rem; // Mucho más grande
-  color: $azul-medio;
+  justify-content: center;
   margin-bottom: 2rem;
 }
 
-// =============================================
-// SECCIÓN 4: ACCIONES - MUCHO MÁS AMPLIAS
-// =============================================
+.big-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 24px;
+  background: $azul-medio;
+  color: $blanco;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.4rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* === 5. ACCIONES (Crear / Ingresar reunión) === */
 
 .actions-grid {
   display: flex;
   flex-direction: column;
-  gap: 2.5rem; // Más espacio
-  max-width: 600px; // Ancho máximo aumentado
-  width: 100%;
-  margin: 0 auto;
-  flex: none;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
 }
 
 .action-card {
-  background: none;
-  backdrop-filter: none;
-  border: none;
-  box-shadow: none;
-  padding: 0;
   text-align: center;
-  transition: none;
 }
 
-.card-title, .card-description {
-  display: none;
-}
+.create-meeting-card .card-btn {
+  @include button-base;
+  width: 100%;
+  height: 56px;
+  font-size: 17px;
+  background: $azul-card;
+  color: $blanco;
+  box-shadow: 0 6px 18px rgba($azul-card, 0.5);
 
-// Botón de Crear Reunión - MUCHO MÁS GRANDE
-.create-meeting-card {
-  .card-btn {
-    @include button-base;
-    width: 100%;
-    height: 60px; // Mucho más alto
-    font-size: 18px; // Texto más grande
-    font-weight: 700;
-    background: $azul-medio;
-    color: $blanco;
-    box-shadow: 0 5px 20px rgba($azul-medio, 0.4);
-    border-radius: 12px;
-
-    &:hover {
-      background: darken($azul-medio, 10%);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba($azul-medio, 0.5);
-    }
+  &:hover {
+    background: darken($azul-card, 6%);
+    transform: translateY(-2px);
   }
 }
 
-// Formulario de Unirse - MUCHO MÁS AMPLIO
 .join-form {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 15px; // Más espacio
-  margin-top: 0;
+  gap: 0.8rem;
+}
 
-  .input-group {
-    width: auto;
-    flex-grow: 1;
-    margin-bottom: 0;
-  }
+.input-group {
+  flex: 1;
 }
 
 .meeting-input {
   width: 100%;
-  padding: 1rem 1.5rem; // Más padding
-  border: 2px solid $gris-borde; 
+  height: 56px;
   border-radius: 12px;
-  font-size: 16px;
-  background: $input-fondo-gris; 
-  color: $input-texto-color;
-  height: 60px; // Misma altura que botones
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  
+  border: none;
+  padding: 0 1.1rem;
+  font-size: 15px;
+  background: #c2d5ec;
+  color: $azul-oscuro;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
   &::placeholder {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 16px;
+    color: rgba(27, 42, 65, 0.75);
   }
-  
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba($azul-medio, 0.5);
+  }
+}
+
+.secondary-btn {
+  @include button-base;
+  height: 56px;
+  padding: 0 1.4rem;
+  background: $azul-claro;
+  color: $azul-oscuro;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background: darken($azul-claro, 6%);
+    transform: translateY(-1px);
+  }
+}
+
+/* === 6. REUNIONES === */
+
+.meetings-section {
+  background: $gris-card;
+  border-radius: 18px;
+  padding: 1.4rem 1.5rem;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
+
+  /* para que el contenido scrollee dentro y la tarjeta no crezca más */
+  max-height: 330px;
+  overflow-y: auto;
+}
+
+.meetings-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: $azul-oscuro;
+  margin-bottom: 1rem;
+}
+
+.meeting-card {
+  background: $azul-card;
+  border-radius: 16px;
+  padding: 0.9rem 1rem;
+  color: $blanco;
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.25);
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  &__row {
+    display: flex;
+    gap: 1.1rem;
+    margin-bottom: 0.5rem;
+
+    > div {
+      flex: 1;
+    }
+  }
+
+  &__label {
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+  }
+
+  &__description {
+    font-size: 0.8rem;
+    margin-bottom: 0.6rem;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__btn {
+    @include button-base;
+    padding: 0.35rem 1.1rem;
+    border-radius: 999px;
+    background: $blanco;
+    color: $azul-card;
+    font-size: 0.8rem;
+
+    &:hover {
+      background: #f5f6fa;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+/* === 7. MODAL === */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal {
+  width: 100%;
+  max-width: 440px;
+  background: $gris-card;
+  border-radius: 20px;
+  padding: 1.7rem 2rem;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5);
+  color: $azul-oscuro;
+}
+
+.modal__title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.modal__label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.8rem;
+  font-size: 0.9rem;
+}
+
+.modal__input,
+.modal__textarea {
+  border-radius: 12px;
+  border: 1px solid $azul-claro;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.9rem;
+  background: #dde7f5;
+
   &:focus {
     outline: none;
     border-color: $azul-medio;
-    background: rgba(70, 102, 147, 0.7);
-    box-shadow: 0 5px 15px rgba(70, 102, 147, 0.3);
+    box-shadow: 0 0 0 2px rgba($azul-medio, 0.3);
   }
 }
 
-.join-meeting-card {
-  .card-btn.secondary-btn {
-    height: 60px; // Misma altura
-    width: 160px; // Más ancho
-    padding: 1rem 1.5rem;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    background: $azul-claro;
-    color: $azul-texto; 
-    border: none;
-    white-space: nowrap;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-    
+.modal__textarea {
+  resize: none;
+  min-height: 80px;
+}
+
+.modal__buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  margin-top: 0.6rem;
+}
+
+.modal__btn {
+  @include button-base;
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+
+  &--secondary {
+    background: #c4ccd9;
+    color: $azul-oscuro;
+
     &:hover {
-      background: darken($azul-claro, 12%);
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+      background: darken(#c4ccd9, 5%);
+    }
+  }
+
+  &--primary {
+    background: $azul-medio;
+    color: $blanco;
+
+    &:hover {
+      background: darken($azul-medio, 6%);
     }
   }
 }
 
-// =============================================
-// SECCIÓN 5: SOCIAL FOOTER - ELIMINADO
-// =============================================
+/* === 8. RESPONSIVE === */
 
-.social-footer {
-  display: none; // Eliminamos completamente los iconos sociales
-}
-
-// =============================================
-// SECCIÓN 6: RESPONSIVE
-// =============================================
-
-@media (max-width: 1200px) {
-  .sidebar {
-    width: 320px;
-  }
-  
-  .main-content {
-    width: calc(100% - 320px);
-    padding: 3rem 4rem;
-  }
-}
-
-@media (max-width: 1024px) {
-  .sidebar {
-    width: 300px;
-  }
-  
-  .main-content {
-    width: calc(100% - 300px);
-    padding: 3rem;
-  }
-  
-  .actions-grid {
-    max-width: 500px;
-  }
-}
-
-@media (max-width: 768px) {
-  .home-wrapper {
+@media (max-width: 900px) {
+  .home-frame {
     flex-direction: column;
+    width: 95%;
+    height: auto;
+    min-height: 100vh;
+    position: static;
+    transform: none;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0 auto;
   }
-  
+
   .sidebar {
     width: 100%;
-    padding: 0;
+    flex-direction: row;
+    align-items: center;
   }
 
   .sidebar-header {
-    padding: 2rem 1.5rem 1rem;
+    padding: 1.5rem 1.5rem 1rem;
   }
-  
+
   .sidebar-nav ul {
     display: flex;
-    justify-content: space-around;
+    margin: 0;
     border-top: none;
-    padding: 1rem 0;
   }
-  
+
   .nav-item {
-    flex-direction: column;
-    padding: 1rem 0.5rem;
+    padding: 0.9rem 1rem;
     border-left: none;
-    border-bottom: 5px solid transparent;
-    
+    border-bottom: 4px solid transparent;
+
     &.active {
-      background: none;
-      border-left: none;
-      border-bottom: 5px solid $azul-oscuro;
+      background: transparent;
+      color: $blanco;
+      border-bottom-color: $blanco;
     }
   }
 
-  .nav-icon {
-    margin-right: 0;
-    font-size: 1.3rem;
-  }
-
-  .nav-text {
-    font-size: 0.9rem;
-    margin-top: 5px;
-  }
-
   .sidebar-footer {
-    padding: 1.5rem;
+    padding: 0 1rem 1.2rem;
   }
 
-  .logout-btn {
-    height: 50px;
-    font-size: 16px;
-  }
-  
   .main-content {
-    width: 100%;
-    padding: 3rem 2rem;
-    min-height: 70vh;
-    justify-content: flex-start;
-    padding-top: 3rem;
+    padding: 2rem 1.5rem;
   }
-  
-  .actions-grid {
-    width: 100%;
-    max-width: 450px;
-    gap: 2rem;
-  }
-  
+
   .join-form {
     flex-direction: column;
-    gap: 15px;
   }
-  
-  .join-meeting-card .card-btn.secondary-btn {
+
+  .secondary-btn {
     width: 100%;
-    height: 55px;
   }
-  
-  .create-meeting-card .card-btn {
-    height: 55px;
-    font-size: 16px;
+
+  .meeting-card__row {
+    flex-direction: column;
   }
-  
-  .meeting-input {
-    height: 55px;
-    font-size: 15px;
-  }
-  
-  .big-icon {
-    font-size: 4rem;
+
+  .meetings-section {
+    max-height: none;
   }
 }
 
 @media (max-width: 480px) {
-  .sidebar-header {
-    padding: 1.5rem 1rem 0.8rem;
+  .home-page {
+    padding: 0;
   }
-  
-  .logo {
-    font-size: 1.8rem;
-  }
-  
+
   .main-content {
-    padding: 2rem 1rem;
-  }
-  
-  .actions-grid {
-    max-width: 350px;
-  }
-  
-  .big-icon {
-    font-size: 3.5rem;
-  }
-  
-  .meeting-input {
-    font-size: 14px;
-    padding: 0.9rem 1.2rem;
-  }
-  
-  .create-meeting-card .card-btn,
-  .join-meeting-card .card-btn.secondary-btn {
-    font-size: 15px;
+    padding: 1.7rem 1.2rem;
   }
 }
