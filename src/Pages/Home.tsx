@@ -182,5 +182,6 @@ const Home: React.FC = () => {
     </div>
   );
 };
+console.log("🔍 Renderizando HOME");
 
 export default Home;
