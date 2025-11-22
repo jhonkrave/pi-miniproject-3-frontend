@@ -1,0 +1,124 @@
+.app-footer {
+  background: linear-gradient(135deg, #1B2A41 0%, #274C77 100%);
+  color: #ffffff;
+  padding: 40px 20px 20px;
+  margin-top: auto;
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+  box-sizing: border-box;
+  position: relative;
+  left: 0;
+  right: 0;
+  flex-shrink: 0;
+
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+  }
+
+  .footer-section {
+    .footer-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #A3CEF1;
+    }
+
+    .footer-description {
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.8);
+      margin: 0;
+    }
+
+    .footer-heading {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #A3CEF1;
+    }
+
+    .footer-links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        margin-bottom: 10px;
+
+        a {
+          color: rgba(255, 255, 255, 0.8);
+          text-decoration: none;
+          font-size: 14px;
+          transition: all 0.3s ease;
+          display: inline-block;
+
+          &:hover {
+            color: #A3CEF1;
+            transform: translateX(5px);
+          }
+
+          &.active {
+            color: #A3CEF1;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+
+    .social-links {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+
+      .social-link {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        color: rgba(255, 255, 255, 0.8);
+        transition: all 0.3s ease;
+        text-decoration: none;
+
+        &:hover {
+          background: #A3CEF1;
+          color: #1B2A41;
+          transform: translateY(-3px);
+        }
+
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+  }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+    text-align: center;
+
+    .footer-copyright {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.6);
+      margin: 0;
+    }
+  }
+}
+

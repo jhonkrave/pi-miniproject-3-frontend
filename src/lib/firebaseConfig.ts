@@ -3,13 +3,13 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, FacebookAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB_LV1u1DUwH4_L9YsgWSeNXyuZu0blBak",
-  authDomain: "mini-proyecto3-460dc.firebaseapp.com",
-  projectId: "mini-proyecto3-460dc",
-  storageBucket: "mini-proyecto3-460dc.appspot.com",
-  messagingSenderId: "861833654330",
-  appId: "1:861833654330:web:cfe79bae95f74e22fd8503",
-  measurementId: "G-P79HXZ3SMF"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Inicializar Firebase
