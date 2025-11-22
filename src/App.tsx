@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
-import Login from './Pages/Login';
-import Register from './Pages/Register';
-import ForgotPassword from './Pages/ForgotPassword';
-import Home from './Pages/Home';
-import HostMeeting from './Pages/HostMeeting'; // ⭐ NUEVA IMPORTACIÓN
+import Login from './Pages/Login/Login';
+import Register from './Pages/Register/Register';
+import ForgotPassword from './Pages/ForgotPassword/ForgotPassword';
+import Home from './Pages/Home/Home';
+import HostMeeting from './Pages/HostMeeting/HostMeeting'; // ⭐ NUEVA IMPORTACIÓN
 import Footer from './components/Footer/Footer';
 
 function App() {
