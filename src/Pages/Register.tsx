@@ -3,10 +3,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Register.scss';
 
-// 🔥 Firebase
-import { signInWithPopup } from "firebase/auth";
-import { auth, googleProvider, facebookProvider } from "../firebase/firebaseConfig";
-
 interface RegisterProps {
   onGoToLogin?: () => void;
 }
@@ -45,10 +41,10 @@ const Register: React.FC<RegisterProps> = ({ onGoToLogin }) => {
   // --------------------------------------------------
   const handleGoogleRegister = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
+      //const result = await signInWithPopup(auth, googleProvider);
 
-      const user = result.user;
-      console.log("Usuario registrado con Google:", user);
+      //const user = result.user;
+      //console.log("Usuario registrado con Google:", user);
 
       alert("Cuenta creada exitosamente con Google ✨");
       navigate("/home");
@@ -71,10 +67,10 @@ const Register: React.FC<RegisterProps> = ({ onGoToLogin }) => {
   // --------------------------------------------------
   const handleFacebookRegister = async () => {
     try {
-      const result = await signInWithPopup(auth, facebookProvider);
+      //const result = await signInWithPopup(auth, facebookProvider);
 
-      const user = result.user;
-      console.log("Usuario registrado con Facebook:", user);
+      //const user = result.user;
+      //console.log("Usuario registrado con Facebook:", user);
 
       alert("Cuenta creada exitosamente con Facebook ✨");
       navigate("/home");

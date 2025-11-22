@@ -18,13 +18,14 @@ $blanco: #ffffff;
 
 // Contenedor principal para el fondo degradado de pantalla completa
 .host-wrapper-centered {
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    min-height: calc(100vh - 200px);
     background: linear-gradient(180deg, #7da9d9, #3a73b3);
     display: flex;
     justify-content: center; // Centra horizontalmente el marco
     align-items: center; // Centra verticalmente el marco
     box-sizing: border-box;
+    padding: 20px 0;
 }
 
 // ⭐ MARCO CENTRALIZADO (simula .home-frame) ⭐
