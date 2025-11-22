@@ -1,11 +1,6 @@
 // Pages/Login.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-// 🔥 Firebase
-import { signInWithPopup } from "firebase/auth";
-import { auth, googleProvider, facebookProvider } from "../firebase/firebaseConfig";
-
 import './Login.scss';
 
 interface LoginProps {
@@ -20,18 +15,22 @@ const Login: React.FC<LoginProps> = ({ onGoToRegister, onGoToForgotPassword }) =
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+  // ⭐ Inicio de sesión normal (correo y contraseña NO usa Firebase)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     console.log('Iniciando sesión...', { email, password, rememberMe });
+
+    // 👉 Aquí navega directamente al home
+    navigate("/home");
   };
 
   // ⭐⭐⭐ GOOGLE LOGIN ⭐⭐⭐
   const handleGoogleLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-
-      const user = result.user;
-      console.log("Usuario con Google:", user);
+      //const result = await signInWithPopup(auth, googleProvider);
+      //const user = result.user;
+      //console.log("Usuario con Google:", user);
 
       alert("¡Inicio de sesión con Google exitoso!");
       navigate("/home");
@@ -42,13 +41,12 @@ const Login: React.FC<LoginProps> = ({ onGoToRegister, onGoToForgotPassword }) =
     }
   };
 
-  // ⭐⭐⭐ FACEBOOK LOGIN (FUNCIONALIDAD COMPLETA) ⭐⭐⭐
+  // ⭐⭐⭐ FACEBOOK LOGIN ⭐⭐⭐
   const handleFacebookLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, facebookProvider);
-
-      const user = result.user;
-      console.log("Usuario con Facebook:", user);
+      //const result = await signInWithPopup(auth, facebookProvider);
+      //const user = result.user;
+      //console.log("Usuario con Facebook:", user);
 
       alert("¡Inicio de sesión con Facebook exitoso!");
       navigate("/home");
@@ -193,7 +191,7 @@ const Login: React.FC<LoginProps> = ({ onGoToRegister, onGoToForgotPassword }) =
                 Iniciar con Google
               </button>
 
-              {/* FACEBOOK — ⭐ AHORA FUNCIONAL ⭐ */}
+              {/* FACEBOOK */}
               <button type="button" className="btn btn-facebook" onClick={handleFacebookLogin}>
                 <svg className="social-icon facebook-icon" width="20" height="20" viewBox="0 0 24 24" fill="#1877F2">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43
