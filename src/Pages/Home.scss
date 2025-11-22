@@ -1,0 +1,607 @@
+// Pages/Home.scss
+// =============================================
+// VARIABLES DE COLORES (MANTENIDAS EXACTAS)
+// =============================================
+
+$azul-oscuro: #1B2A41;
+$azul-medio: #274C77;
+$azul-claro: #A3CEF1;
+$azul-boton: #A3CEF1;
+$azul-texto: #1B2A41;
+$azul-fondo: #E5F1FF;
+$gris-card: rgba(223, 220, 220, 0.95);
+$gris-oscuro: #1A1A1A;
+$gris-texto: #6D6D6D;
+$gris-placeholder: #9A9A9A;
+$gris-borde: #A3CEF1;
+$blanco: #FFFFFF;
+
+// =============================================
+// ESTILOS BASE Y RESET (MANTENIDOS)
+// =============================================
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden;
+  background: $azul-fondo;
+  min-height: 100vh;
+  position: relative;
+}
+
+// =============================================
+// LAYOUT PRINCIPAL (DIMENSIONES MANTENIDAS EXACTAS)
+// =============================================
+
+.home-wrapper {
+  display: flex;
+  width: 90%;
+  max-width: 1200px;
+  height: 85vh;
+  min-height: 600px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  background: $blanco;
+
+  @media (max-width: 768px) {
+    width: 95%;
+    height: auto;
+    min-height: 100vh;
+    flex-direction: column;
+    position: static;
+    transform: none;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0 auto;
+  }
+}
+
+.home-full-section {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  background: linear-gradient(135deg, #1B2A41 0%, #274C77 50%, #A3CEF1 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    padding: 15px;
+  }
+}
+
+.content-card {
+  width: 100%;
+  height: 100%;
+  background: $gris-card;
+  border-radius: 15px;
+  
+  /* 🔥 QUITA TODO EL ESPACIO INTERNO PARA QUE EL MENÚ PEGUE AL BORDE */
+  padding: 0;
+
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+}
+
+.home-header {
+  display: none !important;   // 🔥 ELIMINA la caja superior estorbando
+}
+
+  .header-icon {
+    font-size: 32px;
+    color: $azul-texto;
+    background: rgba(163, 206, 241, 0.3);
+    padding: 12px;
+    border-radius: 12px;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+.layout-container {
+  display: flex;
+  flex: 1;               // 🔥 ahora ocupa TODO el alto disponible
+  height: 100%;          // 🔥 necesario para que el menú llegue al tope
+  min-height: 100%;      // 🔥 obliga a crecer hasta el borde del panel gris
+  overflow: hidden;
+  gap: 0;
+  align-items: stretch;  // 🔥 hace que el menú y el main se estiren parejo
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 20px;
+    height: auto;
+    min-height: auto;
+  }
+}
+
+// =============================================
+// MENÚ LATERAL — VERSIÓN CORREGIDA SEGÚN INDICACIONES
+// =============================================
+
+.side-menu {
+  width: 280px;
+  height: 100%;
+  background: linear-gradient(to bottom, #274C77 0%, #A3CEF1 100%);
+
+  margin: 0 !important;
+  padding: 20px 18px;
+
+  border-radius: 15px 0 0 15px;  // 🟦 borde izquierdo completo
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  /* 🔥 ESTO OBLIGA REALMENTE AL MENÚ A PEGARSE AL PANEL GRIS */
+  align-self: stretch;
+}
+
+  // CORRECCIÓN: Eliminado .menu-title (texto "TeamLink")
+
+
+.menu-nav {
+  margin-top: -58px; // 🔥 Sube el bloque de opciones del menú
+
+  ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #000000; 
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateX(5px);
+    }
+
+    &.active {
+      background: rgba(163, 206, 241, 0.3);
+      border-left: 4px solid $azul-claro;
+      
+      .menu-text {
+        font-weight: 600;
+      }
+    }
+
+    .menu-icon {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
+
+    .menu-text {
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+}
+
+// CORRECCIÓN: Eliminada sección "Crear Reunión" del menú
+
+.menu-footer {
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+
+  .logout-btn-menu {
+    width: 100%;
+    background: #274C77 100%;   // ⭐ NUEVO FONDO
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    backdrop-filter: blur(6px);              // ⭐ EFECTO GLASS
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.35); // ⭐ HOVER MÁS LUMINOSO
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+    }
+
+    .logout-icon {
+      font-size: 15px;
+    }
+  }
+}
+
+// =============================================
+// CONTENIDO PRINCIPAL - DISEÑO MEJORADO
+// =============================================
+.main-content {
+  flex: 1;
+  height: 100%;         // 🔥 ahora respeta el alto del contenedor
+  min-height: 0;        // 🔥 permite scroll sin romper el layout
+  overflow-y: auto;     // scroll interno real
+  padding: 20px;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    order: 1;
+    padding: 15px;
+    height: auto;
+    min-height: auto;
+  }
+}
+// =============================================
+// NUEVA SECCIÓN: CREAR REUNIÓN (MOVIDA AQUÍ)
+// =============================================
+
+.create-meeting-section {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(163, 206, 241, 0.4);
+  backdrop-filter: blur(10px);
+
+  .section-title {
+    color: $azul-texto;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(163, 206, 241, 0.5);
+  }
+
+  .create-meeting-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      label {
+        color: $gris-oscuro;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .meeting-input {
+        width: 100%;
+        height: 40px;
+        padding: 0 15px;
+        border: 2px solid rgba(163, 206, 241, 0.5);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.9);
+        font-size: 13px;
+        transition: all 0.3s ease;
+        color: $gris-oscuro;
+
+        &::placeholder {
+          color: $gris-placeholder;
+          font-size: 12px;
+        }
+
+        &:focus {
+          outline: none;
+          border-color: $azul-claro;
+          background: $blanco;
+          box-shadow: 0 0 0 3px rgba(163, 206, 241, 0.3);
+        }
+      }
+    }
+
+    .ingresar-btn {
+      background: $azul-claro;
+      color: $azul-texto;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      align-self: flex-start;
+
+      &:hover {
+        background: lighten($azul-claro, 10%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(163, 206, 241, 0.4);
+      }
+    }
+  }
+}
+
+/* ================================
+   FIX: QUE LAS TARJETAS NO SE SALGAN
+   ================================ */
+
+.meetings-section {
+  margin: 0 !important;              // elimina empujones hacia abajo
+  padding-bottom: 10px !important;   // deja espacio exacto sin que se salga
+}
+
+.meeting-card-enhanced {
+  margin: 10px 0 !important;         // ajusta margen vertical
+}
+
+.meetings-section:last-child,
+.meeting-card-enhanced:last-child {
+  margin-bottom: 0 !important;       // evita que la última empuje el borde
+  padding-bottom: 0 !important;
+}
+
+.main-content {
+  padding-bottom: 10px !important;   // asegura que nada se salga del contenedor
+}
+
+
+// =============================================
+// SECCIÓN RECURSOS - NUEVO DISEÑO MEJORADO
+// =============================================
+
+.resources-section-enhanced {
+  margin: 30px 0;
+
+  .resources-title {
+    color: $gris-oscuro;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid $azul-claro;
+  }
+
+  .resource-card-enhanced {
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(163, 206, 241, 0.3);
+    backdrop-filter: blur(8px);
+
+    .resource-header {
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(163, 206, 241, 0.4);
+
+      h4 {
+        color: $azul-texto;
+        font-size: 14px;
+        font-weight: 700;
+        margin: 0;
+        border-left: 3px solid $azul-claro;
+        padding-left: 10px;
+      }
+    }
+
+    .resource-details {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .resource-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+
+      @media (max-width: 480px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+      }
+
+      strong {
+        color: $gris-oscuro;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      span {
+        color: $gris-texto;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .progress-resource {
+        color: #2E7D32;
+        font-weight: 600;
+        background: rgba(46, 125, 50, 0.1);
+        padding: 4px 8px;
+        border-radius: 6px;
+      }
+    }
+
+    .resource-description {
+      margin-top: 12px;
+      padding: 12px;
+      background: rgba(163, 206, 241, 0.08);
+      border-radius: 6px;
+      border-left: 3px solid $azul-claro;
+
+      p {
+        color: $gris-texto;
+        font-size: 12px;
+        line-height: 1.4;
+        margin: 0;
+
+        strong {
+          color: $gris-oscuro;
+        }
+      }
+    }
+  }
+
+  .resource-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, $azul-claro 50%, transparent 100%);
+    margin: 20px 0;
+    opacity: 0.5;
+  }
+}
+
+// =============================================
+// SCROLLBAR PERSONALIZADO
+// =============================================
+
+.main-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.main-content::-webkit-scrollbar-track {
+  background: rgba(163, 206, 241, 0.2);
+  border-radius: 3px;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+  background: $azul-claro;
+  border-radius: 3px;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+  background: darken($azul-claro, 10%);
+}
+
+// =============================================
+// RESPONSIVE (MANTENIDO)
+// =============================================
+
+@media (max-width: 768px) {
+  .home-full-section {
+    padding: 10px;
+  }
+
+  .content-card {
+    padding: 15px;
+  }
+
+  .home-header {
+    margin-bottom: 15px;
+  }
+
+  .layout-container {
+    gap: 15px;
+  }
+
+  .side-menu {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-wrapper {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .home-full-section {
+    min-height: 100vh;
+  }
+
+  .content-card {
+    min-height: 100vh;
+  }
+
+  .meetings-section .section-main-title {
+    font-size: 20px;
+  }
+
+  .resources-section-enhanced .resources-title {
+    font-size: 18px;
+  }
+}
+.card-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;      // 🔥 elimina espacio interno
+  margin: 0 !important;
+}
+
+.menu-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;   // 🔥 Subimos el logo
+  margin-bottom: 20px;           // 🔥 Menos espacio debajo
+  gap: 10px;
+  padding-top: 0;                // 🔥 Quita espacio arriba
+  transform: translateY(-45px);  // 🔥 Súbelo visualmente
+}
+
+.menu-logo {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  margin-bottom: 5px;
+}
+
+.menu-brand {
+  color: #FFFFFF;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+/* FIX PARA BAJAR EL FORMULARIO Y EVITAR QUE SE PEGUE ARRIBA */
+.main-content {
+  padding-top: 40px !important;   // baja todo el contenido principal
+}
+
+.create-meeting-section {
+  margin-top: 20px !important;    // distancia perfecta del borde superior
+}
+
+/* ============================================
+   LOGO SUPERIOR DE CREAR REUNIÓN
+   ============================================ */
+
+.create-logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+  margin-top: -10px;     // 🔥 Ajústalo según lo quieras más arriba o abajo
+}
+
+.create-logo {
+  width: 70px;           // 🔥 Cambia tamaño si lo quieres más grande
+  height: 70px;
+  object-fit: contain;
+  background: #274C77;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
