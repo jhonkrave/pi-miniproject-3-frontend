@@ -1,11 +1,6 @@
 // Pages/Login.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-// 🔥 Firebase solo para Google/Facebook
-import { signInWithPopup } from "firebase/auth";
-import { auth, googleProvider, facebookProvider } from "../firebase/firebaseConfig";
-
 import './Login.scss';
 
 interface LoginProps {
@@ -33,9 +28,9 @@ const Login: React.FC<LoginProps> = ({ onGoToRegister, onGoToForgotPassword }) =
   // ⭐⭐⭐ GOOGLE LOGIN ⭐⭐⭐
   const handleGoogleLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      console.log("Usuario con Google:", user);
+      //const result = await signInWithPopup(auth, googleProvider);
+      //const user = result.user;
+      //console.log("Usuario con Google:", user);
 
       alert("¡Inicio de sesión con Google exitoso!");
       navigate("/home");
@@ -49,9 +44,9 @@ const Login: React.FC<LoginProps> = ({ onGoToRegister, onGoToForgotPassword }) =
   // ⭐⭐⭐ FACEBOOK LOGIN ⭐⭐⭐
   const handleFacebookLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, facebookProvider);
-      const user = result.user;
-      console.log("Usuario con Facebook:", user);
+      //const result = await signInWithPopup(auth, facebookProvider);
+      //const user = result.user;
+      //console.log("Usuario con Facebook:", user);
 
       alert("¡Inicio de sesión con Facebook exitoso!");
       navigate("/home");
