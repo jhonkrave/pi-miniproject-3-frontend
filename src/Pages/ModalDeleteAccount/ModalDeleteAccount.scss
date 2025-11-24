@@ -1,0 +1,148 @@
+$azul-celeste: #a3cef1;
+$rojo-cancelar: #ff4757;
+$rojo-eliminar: #ff3b3b;
+$azul-boton: #274C77;
+$fondo-overlay: rgba(0, 0, 0, 0.55);
+$blanco: #ffffff;
+$gris-oscuro: #1B2A41;
+$texto-negro: #000000;
+
+/* =============================== */
+/* OVERLAY */
+/* =============================== */
+.eliminar-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: $fondo-overlay;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* =============================== */
+/* CONTENEDOR PRINCIPAL */
+/* =============================== */
+.eliminar-modal {
+  width: 100%;
+  max-width: 520px;
+  background: $azul-celeste;
+  border-radius: 16px;
+  padding: 2.2rem 2rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* =============================== */
+/* ICONO */
+/* =============================== */
+.eliminar-icon {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+/* =============================== */
+/* TITULOS */
+/* =============================== */
+.eliminar-title {
+  font-size: 1.7rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  color: $gris-oscuro;
+  text-transform: uppercase;
+}
+
+.eliminar-subtitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: $gris-oscuro;
+}
+
+.eliminar-text {
+  font-size: 0.95rem;
+  color: #2c3e50;
+  margin-bottom: 1.7rem;
+  line-height: 1.45;
+}
+
+/* =============================== */
+/* INPUT */
+/* =============================== */
+.eliminar-label {
+  text-align: left;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.eliminar-label-text {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.eliminar-input {
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  background: $blanco;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  font-size: 1rem;
+  transition: all 0.3s;
+
+  &:focus {
+    outline: none;
+    border-color: $azul-boton;
+    box-shadow: 0 0 0 3px rgba(39, 76, 119, 0.2);
+  }
+}
+
+/* =============================== */
+/* BOTONES */
+/* =============================== */
+.eliminar-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.7rem;
+}
+
+.eliminar-btn {
+  flex: 1;
+  border: none;
+  border-radius: 10px;
+  padding: 0.9rem 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: $blanco;
+  cursor: pointer;
+  transition: 0.25s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* CANCELAR */
+.cancelar {
+  background: $azul-boton;
+
+  &:hover {
+    background: darken($azul-boton, 10%);
+    transform: translateY(-2px);
+  }
+}
+
+/* ELIMINAR */
+.eliminar {
+  background: $rojo-eliminar;
+
+  &:hover {
+    background: darken($rojo-eliminar, 10%);
+    transform: translateY(-2px);
+  }
+}

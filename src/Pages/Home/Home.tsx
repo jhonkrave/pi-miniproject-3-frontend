@@ -3,16 +3,19 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Home.scss';
 
+// Modal
+import ModalCreateMeeting from '../ModalCreateMeeting/ModalCreateMeeting';
+
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const [meetingId, setMeetingId] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleLogout = () => {
     navigate('/login');
   };
 
-  const handleCreateMeeting = () => {
-    console.log('Creando reunión con ID:', meetingId);
+  const goToProfile = () => {
+    navigate('/profile');
   };
 
   return (
@@ -21,21 +24,11 @@ const Home: React.FC = () => {
         <div className="content-card">
           <div className="card-content">
 
-            {/* HEADER (OCULTO POR SCSS) */}
-            <header className="home-header">
-              <div className="header-icon">
-                <i className="fas fa-users"></i>
-              </div>
-            </header>
-
             <div className="layout-container">
 
-              {/* ========================== */}
-              {/*       MENÚ LATERAL         */}
-              {/* ========================== */}
+              {/* MENÚ LATERAL */}
               <aside className="side-menu">
 
-                {/* LOGO DEL MENÚ */}
                 <div className="menu-header">
                   <img
                     src="/Imagenes/logo.png"
@@ -44,41 +37,40 @@ const Home: React.FC = () => {
                   />
                 </div>
 
-                {/* NAVEGACIÓN */}
                 <nav className="menu-nav">
                   <ul>
+                    {/* HOME */}
                     <li className="menu-item active">
                       <span className="menu-icon">🏠</span>
                       <span className="menu-text">Home</span>
                     </li>
 
-                    <li className="menu-item">
+                    {/* PERFIL */}
+                    <li className="menu-item" onClick={goToProfile}>
                       <span className="menu-icon">👤</span>
                       <span className="menu-text">Mi Perfil</span>
                     </li>
 
-                    <li className="menu-item">
+                    {/* ⭐ SOBRE NOSOTROS ⭐ */}
+                    <li className="menu-item" onClick={() => navigate("/about-us")}>
                       <span className="menu-icon">ℹ️</span>
                       <span className="menu-text">Sobre Nosotros</span>
                     </li>
                   </ul>
                 </nav>
 
-                {/* BOTÓN CERRAR SESIÓN */}
                 <div className="menu-footer">
                   <button className="logout-btn-menu" onClick={handleLogout}>
                     <span className="logout-icon">🚪</span>
                     Cerrar Sesión
                   </button>
                 </div>
+
               </aside>
 
-              {/* ========================== */}
-              {/*     CONTENIDO PRINCIPAL    */}
-              {/* ========================== */}
+              {/* CONTENIDO PRINCIPAL */}
               <main className="main-content">
 
-                {/* LOGO SUPERIOR CREADOR DE REUNIÓN */}
                 <div className="create-logo-container">
                   <img
                     src="/Imagenes/logo2.png"
@@ -87,38 +79,64 @@ const Home: React.FC = () => {
                   />
                 </div>
 
-                {/* SECCIÓN CREAR REUNIÓN */}
-                <section className="create-meeting-section">
-                  <h2 className="section-title">Crear Reunión</h2>
+                <div className="crear-reunion-container">
+                  <div className="crear-reunion-wrapper">
 
-                  <div className="create-meeting-form">
-
-                    <div className="form-group">
-                      <label htmlFor="meeting-id">Ingresar ID de reunión</label>
-
-                      <input
-                        type="text"
-                        id="meeting-id"
-                        value={meetingId}
-                        onChange={(e) => setMeetingId(e.target.value)}
-                        placeholder="ID de reunión"
-                        className="meeting-input"
-                      />
-                    </div>
-
+                    {/* BOTÓN MODAL */}
                     <button
-                      type="button"
-                      className="ingresar-btn"
-                      onClick={handleCreateMeeting}
+                      className="crear-reunion-title crear-reunion-btn-modal"
+                      onClick={() => setModalOpen(true)}
                     >
-                      Ingresar
+                      Crear Reunión
                     </button>
 
+                    {/* INPUT + BOTÓN */}
+                    <div className="crear-reunion-form">
+                      <input
+                        type="text"
+                        placeholder="Ingresar ID de reunión"
+                        className="crear-reunion-input"
+                      />
+
+                      <button className="crear-reunion-btn">Ingresar</button>
+                    </div>
+
+                    {/* TARJETAS */}
+                    <div className="panel-reuniones">
+                      <h3 className="panel-reuniones-title">Reuniones</h3>
+
+                      <div className="panel-reuniones-content">
+
+                        <div className="reunion-card">
+                          <div className="reunion-card-header">
+                            <h4>Reunión de Equipo</h4>
+                            <span className="reunion-id">ID: 8379826</span>
+                          </div>
+
+                          <div className="reunion-info">
+                            <div><strong>📅 Fecha:</strong> 10-Nov-2025</div>
+                            <div><strong>⏰ Hora:</strong> 9:20 AM</div>
+                          </div>
+
+                          <button className="btn-acceder">Acceder</button>
+                        </div>
+
+                      </div>
+                    </div>
+
                   </div>
-                </section>
+                </div>
 
               </main>
             </div>
+
+            {/* MODAL CREAR */}
+            {modalOpen && (
+              <ModalCreateMeeting
+                onClose={() => setModalOpen(false)}
+                onCreate={(data) => console.log("Reunión creada:", data)}
+              />
+            )}
 
           </div>
         </div>
@@ -126,6 +144,5 @@ const Home: React.FC = () => {
     </div>
   );
 };
-console.log("🔍 Renderizando HOME");
 
 export default Home;

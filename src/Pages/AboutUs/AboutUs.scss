@@ -1,0 +1,75 @@
+/* ================================
+   CONTENIDO PRINCIPAL
+================================ */
+.sobre-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 15px;
+  width: 100%;
+}
+
+.sobre-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #1B2A41;
+  text-align: center;
+}
+
+.sobre-subtitle {
+  font-size: 15px;
+  color: #333;
+  margin-top: 3px;
+  text-align: center;
+}
+
+/* ========== ANCHO IGUAL QUE MI PERFIL (55%) ========== */
+.sobre-content-wrapper {
+  margin-top: 20px;
+  display: flex;
+  width: 90%;     
+  justify-content: center;
+  gap: 25px;
+}
+
+/* PANEL IZQUIERDO — MISMO ANCHO QUE INFO PERSONAL */
+.sobre-info-card {
+  width: 55%;         /* ⭐ EXACTAMENTE IGUAL QUE EN PROFILE */
+  background: #A3CEF1;
+  padding: 22px;      /* igual que profile */
+  border-radius: 15px;
+  border: 1px solid rgba(0,0,0,0.2);
+}
+
+/* TARJETAS INTERNAS */
+.sobre-section {
+  background: rgba(255,255,255,0.6);
+  padding: 14px;      /* igual que info-item */
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.sobre-section h4 {
+  font-size: 14px;
+  margin-bottom: 5px;
+  font-weight: 700;
+  color: #1B2A41;
+}
+
+.sobre-section p {
+  font-size: 13px;
+  line-height: 1.35;
+  color: #333;
+}
+
+/* IMAGEN DERECHA */
+.sobre-image-container {
+  width: 250px;        /* ⭐ MISMO ANCHO DE TARJETA DERECHA EN PERFIL */
+}
+
+.sobre-image {
+  width: 100%;
+  height: 330px;       /* altura adecuada */
+  object-fit: cover;
+  border-radius: 14px;
+}

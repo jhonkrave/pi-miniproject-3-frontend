@@ -6,6 +6,8 @@ import ForgotPassword from './Pages/ForgotPassword/ForgotPassword';
 import Home from './Pages/Home/Home';
 import HostMeeting from './Pages/HostMeeting/HostMeeting'; // ⭐ NUEVA IMPORTACIÓN
 import Footer from './components/Footer/Footer';
+import Profile from './Pages/Profile/Profile';
+import AboutUs from './Pages/AboutUs/AboutUs';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
             <Route path="/home" element={<Home />} />
             {/* ⭐⭐ NUEVA RUTA PARA HOST MEETING ⭐⭐ */}
             <Route path="/host-meeting" element={<HostMeeting />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/about-us" element={<AboutUs />} />
           </Routes>
         </main>
         <Footer />

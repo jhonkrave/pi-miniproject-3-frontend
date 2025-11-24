@@ -1,268 +1,181 @@
-// Pages/HostMeeting.scss
-
-// =============================================
-// 1. PALETA DE COLORES (Con $blanco definido)
-// =============================================
-
-$azul-oscuro: #1b2a41;
-$azul-medio: #274c77;
-$azul-claro: #a3cef1;
-$azul-fondo-base: #8bb7e0; 
-$azul-participante: #b9d9f3; 
-$gris-claro: #f2f3f7; 
-$rojo-finalizar: #dc3545; 
-$blanco: #ffffff; 
-
-
-/* === 2. LAYOUT PRINCIPAL Y CENTRADO === */
-
-// Contenedor principal para el fondo degradado de pantalla completa
-.host-wrapper-centered {
-    width: 100%;
-    min-height: calc(100vh - 200px);
-    background: linear-gradient(180deg, #7da9d9, #3a73b3);
-    display: flex;
-    justify-content: center; // Centra horizontalmente el marco
-    align-items: center; // Centra verticalmente el marco
-    box-sizing: border-box;
-    padding: 20px 0;
-}
-
-// ⭐ MARCO CENTRALIZADO (simula .home-frame) ⭐
-.meeting-frame {
-    width: 95%; 
-    max-width: 1300px;
-    height: 90vh; 
-    min-height: 600px;
-    
-    display: flex;
-    flex-direction: column; 
-    // Fondo del frame es el mismo degradado de los videos para que se vea uniforme
-    background: linear-gradient(180deg, #7da9d9, #3a73b3); 
-    border-radius: 20px;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-    overflow: hidden; 
-    padding: 20px; 
-    gap: 20px; 
-}
-
-// Contenedor para el Grid y el Chat
-.meeting-content {
-    flex: 1; 
-    display: flex;
-    gap: 20px;
-}
-
-
-/* === 3. GRID DE PARTICIPANTES === */
-
-.participants-grid {
-    width: 70%; 
-    height: 100%; 
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 15px;
-}
-
-.participant-box {
-  background: $azul-participante;
-  border-radius: 6px; 
+.host-wrapper {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: 600;
-  font-size: 16px;
-  color: $azul-oscuro;
+  width: 90%;
+  max-width: 1200px;
+  height: 85vh;
+  min-height: 600px;
+  position: relative;
+  margin: 40px auto;
   overflow: hidden;
-
-  .host-video-feed {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    background: #8bb7e0; 
-  }
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  background: #ffffff;
 }
 
-.host-camera {
-  background: $azul-fondo-base;
-}
-
-
-/* === 4. CHAT PANEL === */
-
-.chat-panel {
-  width: 30%;
-  max-width: 350px; 
+/* CONTENEDOR PRINCIPAL */
+.host-container {
+  width: 100%;
   height: 100%;
-  background: $gris-claro;
-  border-radius: 8px; 
+  background: linear-gradient(135deg, #1B2A41 0%, #274C77 50%, #A3CEF1 100%);
   display: flex;
   flex-direction: column;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  border-radius: 20px;
+  position: relative;
+}
+
+/* ======================= */
+/*       VIDEO GRID        */
+/* ======================= */
+.video-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 210px;
+  gap: 12px;
+  width: 100%;
+  padding-right: 350px;
+}
+
+.video-box,
+.host-box {
+  background: #A3CEF1;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1B2A41;
+  font-weight: 700;
+}
+
+/* ======================= */
+/*           CHAT          */
+/* ======================= */
+.chat-container {
+  position: absolute;
+  right: 30px;
+  top: 30px;
+  width: 310px;
+  height: 460px;
+  background: #FFFFFF;
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
 }
 
 .chat-header {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.chat-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: black;
+}
+
+.chat-divider {
+  margin-top: 6px;
+  height: 2px;
+  width: 100%;
+  background: #274C77;
+}
+
+/* MENSAJES */
+.chat-messages {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-bottom: 10px;
+  overflow-y: auto;
+}
+
+.chat-message {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  align-items: flex-start;
+}
+
+.chat-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+
+.row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.chat-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #000000;     
+}
+
+.chat-hour {
+  font-size: 10px;
+  color: gray;
+}
+
+.chat-text {
+  font-size: 11px;
+  margin-top: 3px;
+  color: #000000;     
+}
+
+/* INPUT */
+.chat-input-row {
+  display: flex;
+  gap: 6px;
+}
+
+.chat-input {
+  flex: 1;
+  background: #A3CEF1;
+  border: none;
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.chat-send {
+  background: #A3CEF1;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ======================= */
+/*     PANEL CONTROLES     */
+/* ======================= */
+.controls-bar {
+  position: absolute;
+  bottom: 25px;
+  left: 30px;
+  width: calc(100% - 60px);
+  background: #FFFFFF;
+  border-radius: 10px;
   padding: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-weight: 600;
-  color: $azul-oscuro;
-  font-size: 16px;
-  border-bottom: 1px solid #c0c0c0;
-
-  .chat-logo {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-weight: 700;
-    font-size: 14px;
-    color: $azul-oscuro;
-    
-    svg {
-        width: 18px;
-        height: 18px;
-    }
-  }
-}
-
-.chat-messages {
-  flex: 1;
-  padding: 15px;
-  overflow-y: auto;
-}
-
-/* Estilos de mensaje (James Valencia) */
-.message {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  margin-bottom: 15px;
-
-  .avatar {
-    width: 35px;
-    height: 35px;
-    min-width: 35px;
-    border-radius: 50%;
-    overflow: hidden;
-    background: #ccc;
-    img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-  }
-
-  .message-content {
-    flex: 1;
-  }
-
-  .metadata {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    margin-bottom: 2px;
-  }
-
-  .name {
-    font-weight: 600;
-    font-size: 13px;
-    color: $azul-oscuro;
-  }
-
-  .time {
-    font-size: 10px;
-    color: #6c757d;
-  }
-
-  .text {
-    background: $blanco; 
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-size: 14px;
-    color: $azul-oscuro;
-    line-height: 1.4;
-  }
-}
-
-.chat-input-area {
-    padding: 10px 15px;
-    border-top: 1px solid #c0c0c0;
-}
-
-.chat-input-group {
-    display: flex;
-    gap: 8px;
-}
-
-.chat-input-group input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 8px;
-  background: #dfe9f3; 
-  border: 1px solid #c2d5ec;
-  font-size: 14px;
-  color: $azul-oscuro;
-
-  &::placeholder {
-    color: #6c757d;
-  }
-
-  &:focus {
-    outline: none;
-    border-color: $azul-medio;
-  }
-}
-
-.btn-send {
-  padding: 10px 15px;
-  border-radius: 8px;
-  background: $azul-medio; 
-  color: $blanco;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 14px;
-  transition: background 0.2s;
-
-  &:hover {
-    background: darken($azul-medio, 8%);
-  }
-}
-
-/* === 5. CONTROLES INFERIORES (Adaptado al marco) === */
-
-.controls-bar {
-    // Ya no es absolute a la ventana, es relative al .meeting-frame
-    position: relative;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    
-    background: $blanco; 
-    padding: 15px 25px; 
-    border-radius: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); 
 }
 
 .meeting-id {
-  font-size: 16px;
-  color: $azul-oscuro;
-  font-weight: 500;
-
-  strong {
-    font-weight: 700;
-  }
+  background: #274C77;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 8px;
 }
 
-.buttons {
+.control-buttons {
   display: flex;
-  gap: 30px; 
-  margin-right: 50px;
+  gap: 40px;
 }
 
 .control-btn {
@@ -270,127 +183,26 @@ $blanco: #ffffff;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  transition: color 0.2s;
-  color: $azul-oscuro;
-  font-size: 14px;
-
-  &:hover {
-    color: $azul-medio;
-  }
-
-  svg {
-    width: 32px;
-    height: 32px;
-    margin-bottom: 5px;
-
-    path {
-        stroke: currentColor; 
-        fill: none; 
-    }
-    
-    &.icon-mic path:first-child {
-        fill: $blanco; 
-        stroke: none;
-    }
-    
-    &.icon-camera path:nth-child(2) {
-        fill: $azul-oscuro;
-        stroke: none;
-    }
-    
-     &.icon-chat path:first-child {
-        fill: $azul-claro;
-        stroke: $azul-oscuro;
-    }
-  }
 }
 
+.control-img {
+  width: 34px;
+  height: 34px;
+  margin-bottom: 4px;
+}
 
-/* === 6. BOTÓN FINALIZAR REUNIÓN === */
+.control-label {
+  font-size: 12px;
+}
 
 .end-meeting-btn {
-  background: $rojo-finalizar;
-  color: $blanco;
-  padding: 12px 20px;
-  border: none;
+  background: #FF3B3B;
+  color: white;
+  padding: 12px 22px;
   border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
+  border: none;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
-
-  &:hover {
-    background: darken($rojo-finalizar, 8%);
-    transform: translateY(-1px);
-  }
 }
 
-// === RESPONSIVE BÁSICO ===
-@media (max-width: 1200px) {
-  .participants-grid {
-    width: 60%;
-  }
 
-  .chat-panel {
-    width: 40%;
-  }
-  
-  .meeting-frame {
-      // Ajuste de altura para pantallas pequeñas
-      height: 95vh;
-  }
-}
-
-@media (max-width: 900px) {
-    
-  .meeting-frame {
-    flex-direction: column;
-    padding: 10px;
-    gap: 10px;
-  }
-
-  .meeting-content {
-      flex-direction: column;
-  }
-  
-  .participants-grid {
-    width: 100%;
-    height: 60vh;
-    order: 1;
-  }
-
-  .chat-panel {
-    width: 100%;
-    max-width: none;
-    height: 30vh;
-    order: 2;
-  }
-
-  .controls-bar {
-    position: static;
-    order: 3;
-    width: 100%;
-    padding: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-  }
-
-  .buttons {
-    order: 1;
-    margin: 10px 0;
-    gap: 20px;
-  }
-
-  .end-meeting-btn {
-    order: 3;
-    width: 100%;
-  }
-
-  .meeting-id {
-    order: 2;
-    font-size: 14px;
-    width: 100%;
-    text-align: center;
-  }
-}
