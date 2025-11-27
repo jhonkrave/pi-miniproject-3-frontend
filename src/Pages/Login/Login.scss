@@ -75,13 +75,13 @@ body {
   @media (max-width: 768px) {
     width: 95%;
     height: auto;
-    min-height: auto;
+    min-height: 100vh;
     flex-direction: column;
     position: static;
     transform: none;
     border-radius: 0;
     box-shadow: none;
-    margin: 20px auto;
+    margin: 0 auto;
   }
 }
 

@@ -1,0 +1,126 @@
+$azul-celeste: #a3cef1;
+$azul-boton: #274C77;
+$verde-guardar: #2ed573;
+$fondo-overlay: rgba(0, 0, 0, 0.55);
+$blanco: #ffffff;
+$texto-negro: #000000;
+
+/* OVERLAY */
+.editar-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: $fondo-overlay;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* MODAL PRINCIPAL */
+.editar-modal {
+  width: 92%;
+  max-width: 420px;  /* 🔥 ANTES 520px */
+  background: $azul-celeste;
+  border-radius: 16px;
+  padding: 1.8rem 1.5rem; /* 🔥 Menos padding */
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  animation: fadeIn 0.25s ease-out;
+  text-align: center;
+}
+
+/* Animación */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* TITULOS */
+.editar-title {
+  font-size: 1.4rem; /* 🔥 Antes 1.8rem */
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  color: $texto-negro;
+}
+
+.editar-subtitle {
+  font-size: 0.85rem; /* 🔥 más pequeño */
+  color: #2c3e50;
+  margin-bottom: 1.2rem;
+}
+
+/* FORMULARIO */
+.editar-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem; /* 🔥 menos separación */
+}
+
+.editar-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  text-align: left;
+}
+
+.editar-label-text {
+  font-size: 0.85rem; /* 🔥 más pequeño */
+  font-weight: 600;
+  color: $texto-negro;
+}
+
+.editar-input {
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  padding: 0.55rem 0.9rem; /* 🔥 más compacto */
+  background: $blanco;
+  font-size: 0.9rem; /* 🔥 antes 1rem */
+  transition: all 0.25s ease;
+  color: $texto-negro;
+
+  &:focus {
+    outline: none;
+    border-color: $azul-boton;
+    box-shadow: 0 0 0 2px rgba(39, 76, 119, 0.25);
+  }
+}
+
+/* BOTONES */
+.editar-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-top: 1.7rem;
+}
+
+.editar-btn {
+  flex: 1;
+  padding: 0.65rem 0; /* 🔥 más pequeño */
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem; /* 🔥 antes 1rem */
+  font-weight: 700;
+  color: $blanco;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.25s ease;
+}
+
+.cancelar {
+  background: $azul-boton;
+
+  &:hover {
+    background: darken($azul-boton, 10%);
+    transform: translateY(-2px);
+  }
+}
+
+.guardar {
+  background: $verde-guardar;
+
+  &:hover {
+    background: darken($verde-guardar, 10%);
+    transform: translateY(-2px);
+  }
+}

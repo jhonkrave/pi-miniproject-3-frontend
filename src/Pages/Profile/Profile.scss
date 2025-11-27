@@ -1,0 +1,152 @@
+/* CONTENEDOR PRINCIPAL */
+.profile-main {
+  display: flex;
+  flex-direction: column;
+  padding-top: 10px !important;
+  align-items: center;
+}
+
+/* FOTO */
+.profile-photo-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.profile-photo {
+  width: 150px;
+  height: 150px;
+  border-radius: 100%;
+  object-fit: cover;
+}
+
+/* NOMBRE Y FECHA */
+.profile-name {
+  font-size: 32px;
+  font-weight: 700;
+  margin-top: 10px;
+  color: #1B2A41;
+  text-align: center;
+  width: 100%;
+}
+
+.profile-member {
+  margin-top: 3px;
+  color: #555;
+  font-size: 14px;
+  text-align: center;
+  width: 100%;
+}
+
+/* CONTENEDOR DE TARJETAS */
+.profile-info-wrapper {
+  margin-top: 20px;
+  width: 90%;
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+}
+
+/* TARJETA DE INFORMACIÓN PERSONAL */
+.profile-info-card {
+  width: 55%;
+  background: #A3CEF1;
+  padding: 22px;
+  border-radius: 15px;
+  border: 1px solid rgba(0,0,0,0.2);
+}
+
+.profile-info-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 18px;
+
+  h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1B2A41;
+  }
+}
+
+.edit-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  background: #274C77;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* GRID */
+.profile-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.info-item {
+  background: rgba(255,255,255,0.5);
+  padding: 14px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  .label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1B2A41;
+    display: flex;
+    gap: 6px;
+  }
+
+  .value {
+    font-size: 14px;
+    color: #333;
+    margin-top: 5px;
+    font-weight: 400;
+  }
+}
+
+.info-item.wide {
+  grid-column: span 2;
+}
+
+/* TARJETA DERECHA — ACCIONES */
+.profile-actions-card {
+  width: 250px;
+  background: #274C77;
+  padding: 22px;
+  border-radius: 15px;
+  color: white;
+}
+
+.actions-title {
+  font-size: 18px;
+  margin-bottom: 18px;
+  font-weight: 600;
+}
+
+.delete-account-btn {
+  width: 100%;
+  padding: 12px;
+  background: #FF3B3B;
+  border-radius: 8px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.logout-secondary-btn {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 8px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+}
