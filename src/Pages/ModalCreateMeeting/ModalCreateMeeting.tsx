@@ -1,24 +1,25 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./ModalCrearReunion.scss";
+import "./ModalCreateMeeting.scss";
 
-export interface ReunionData {
+export interface MeetingData {
   titulo: string;
   fecha: string;
   hora: string;
   descripcion: string;
 }
 
-interface ModalCrearReunionProps {
+interface ModalCreateMeetingProps {
   onClose: () => void;
-  onCreate: (data: ReunionData) => void;
+  onCreate: (data: MeetingData) => void;
 }
 
-const ModalCrearReunion: React.FC<ModalCrearReunionProps> = ({
+const ModalCreateMeeting: React.FC<ModalCreateMeetingProps> = ({
   onClose,
   onCreate,
 }) => {
   const navigate = useNavigate();
+
   const [titulo, setTitulo] = useState("");
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
@@ -27,30 +28,35 @@ const ModalCrearReunion: React.FC<ModalCrearReunionProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const reunionData = {
+    const reunionData: MeetingData = {
       titulo,
       fecha,
       hora,
       descripcion,
     };
 
+    // Enviamos la data al padre
     onCreate(reunionData);
-    
-    // Navegar a la pantalla de HostMeeting
+
+    // Redirigimos al host meeting
     navigate("/host-meeting");
-    
+
+    // Cerramos el modal
     onClose();
   };
 
   return (
     <div className="crear-modal-overlay">
       <div className="crear-modal">
+
         <h2 className="crear-modal__title">CREAR REUNIÓN</h2>
         <p className="crear-modal__subtitle">
-          Complete el formulario para crear una nueva Reunión
+          Complete el formulario para crear una nueva reunión
         </p>
 
         <form className="crear-modal__form" onSubmit={handleSubmit}>
+          
+          {/* TÍTULO */}
           <label className="crear-modal__label">
             <span className="crear-modal__label-text">📋 Título de la reunión:</span>
             <input
@@ -63,6 +69,7 @@ const ModalCrearReunion: React.FC<ModalCrearReunionProps> = ({
             />
           </label>
 
+          {/* FILA FECHA + HORA */}
           <div className="crear-modal__row">
             <label className="crear-modal__label">
               <span className="crear-modal__label-text">📅 Fecha de inicio:</span>
@@ -87,6 +94,7 @@ const ModalCrearReunion: React.FC<ModalCrearReunionProps> = ({
             </label>
           </div>
 
+          {/* DESCRIPCIÓN */}
           <label className="crear-modal__label">
             <span className="crear-modal__label-text">📝 Descripción:</span>
             <textarea
@@ -101,6 +109,7 @@ const ModalCrearReunion: React.FC<ModalCrearReunionProps> = ({
 
           <div className="crear-modal__divider"></div>
 
+          {/* BOTONES */}
           <div className="crear-modal__buttons">
             <button
               type="button"
@@ -109,6 +118,7 @@ const ModalCrearReunion: React.FC<ModalCrearReunionProps> = ({
             >
               CANCELAR
             </button>
+
             <button
               type="submit"
               className="crear-modal__btn crear-modal__btn--create"
@@ -117,9 +127,10 @@ const ModalCrearReunion: React.FC<ModalCrearReunionProps> = ({
             </button>
           </div>
         </form>
+
       </div>
     </div>
   );
 };
 
-export default ModalCrearReunion;
+export default ModalCreateMeeting;
