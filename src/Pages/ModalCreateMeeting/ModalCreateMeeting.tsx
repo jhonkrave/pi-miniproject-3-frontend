@@ -1,133 +1,83 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./ModalCreateMeeting.scss";
-
-export interface MeetingData {
-  titulo: string;
-  fecha: string;
-  hora: string;
-  descripcion: string;
-}
+import React, { useState } from 'react';
+import '../../styles/modals.scss';
+import { useToast } from '../../context/ToastContext';
 
 interface ModalCreateMeetingProps {
   onClose: () => void;
-  onCreate: (data: MeetingData) => void;
+  onCreate: (data: { title: string; description: string; date: string; time: string }) => void;
 }
 
-const ModalCreateMeeting: React.FC<ModalCreateMeetingProps> = ({
-  onClose,
-  onCreate,
-}) => {
-  const navigate = useNavigate();
-
-  const [titulo, setTitulo] = useState("");
-  const [fecha, setFecha] = useState("");
-  const [hora, setHora] = useState("");
-  const [descripcion, setDescripcion] = useState("");
+const ModalCreateMeeting: React.FC<ModalCreateMeetingProps> = ({ onClose, onCreate }) => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
+  const { showToast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const reunionData: MeetingData = {
-      titulo,
-      fecha,
-      hora,
-      descripcion,
-    };
-
-    // Enviamos la data al padre
-    onCreate(reunionData);
-
-    // Redirigimos al host meeting
-    navigate("/host-meeting");
-
-    // Cerramos el modal
-    onClose();
+    if (!title || !date || !time) {
+        showToast("Por favor completa los campos obligatorios", "error");
+        return;
+    }
+    onCreate({ title, description, date, time });
+    showToast("Reunión creada exitosamente", "success");
   };
 
   return (
-    <div className="crear-modal-overlay">
-      <div className="crear-modal">
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>Nueva Reunión</h2>
+          <button className="close-btn" onClick={onClose}>×</button>
+        </div>
 
-        <h2 className="crear-modal__title">CREAR REUNIÓN</h2>
-        <p className="crear-modal__subtitle">
-          Complete el formulario para crear una nueva reunión
-        </p>
-
-        <form className="crear-modal__form" onSubmit={handleSubmit}>
-          
-          {/* TÍTULO */}
-          <label className="crear-modal__label">
-            <span className="crear-modal__label-text">📋 Título de la reunión:</span>
-            <input
-              type="text"
-              className="crear-modal__input"
-              placeholder="Escriba el título de la reunión"
-              value={titulo}
-              onChange={(e) => setTitulo(e.target.value)}
-              required
+        <form onSubmit={handleSubmit} className="modal-body">
+          <div className="input-group">
+            <label>Título de la reunión *</label>
+            <input 
+              type="text" 
+              placeholder="Ej: Daily Standup"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              autoFocus
             />
-          </label>
-
-          {/* FILA FECHA + HORA */}
-          <div className="crear-modal__row">
-            <label className="crear-modal__label">
-              <span className="crear-modal__label-text">📅 Fecha de inicio:</span>
-              <input
-                type="date"
-                className="crear-modal__input"
-                value={fecha}
-                onChange={(e) => setFecha(e.target.value)}
-                required
-              />
-            </label>
-
-            <label className="crear-modal__label">
-              <span className="crear-modal__label-text">⏰ Hora de inicio:</span>
-              <input
-                type="time"
-                className="crear-modal__input"
-                value={hora}
-                onChange={(e) => setHora(e.target.value)}
-                required
-              />
-            </label>
           </div>
 
-          {/* DESCRIPCIÓN */}
-          <label className="crear-modal__label">
-            <span className="crear-modal__label-text">📝 Descripción:</span>
-            <textarea
-              className="crear-modal__textarea"
-              rows={3}
-              placeholder="¡Descríbela!"
-              value={descripcion}
-              onChange={(e) => setDescripcion(e.target.value)}
-              required
+          <div className="input-group">
+            <label>Descripción (Opcional)</label>
+            <input 
+              type="text" 
+              placeholder="Temas a tratar..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
-          </label>
+          </div>
 
-          <div className="crear-modal__divider"></div>
+          <div style={{display: 'flex', gap: 16}}>
+            <div className="input-group">
+                <label>Fecha *</label>
+                <input 
+                type="date" 
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                />
+            </div>
+            <div className="input-group">
+                <label>Hora *</label>
+                <input 
+                type="time" 
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                />
+            </div>
+          </div>
 
-          {/* BOTONES */}
-          <div className="crear-modal__buttons">
-            <button
-              type="button"
-              className="crear-modal__btn crear-modal__btn--cancel"
-              onClick={onClose}
-            >
-              CANCELAR
-            </button>
-
-            <button
-              type="submit"
-              className="crear-modal__btn crear-modal__btn--create"
-            >
-              CREAR
-            </button>
+          <div className="modal-footer">
+            <button type="button" className="btn btn-ghost" onClick={onClose}>Cancelar</button>
+            <button type="submit" className="btn btn-primary">Crear Reunión</button>
           </div>
         </form>
-
       </div>
     </div>
   );
