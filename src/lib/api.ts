@@ -20,15 +20,20 @@ export interface Meeting {
   startDateTime: string;
   createdBy: string;
   participants?: string[];
+  status: 'scheduled' | 'active' | 'ended' | 'cancelled';
+  maxParticipants: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface MeetingPayload {
   title: string;
   description?: string;
   startDateTime: string;
+  maxParticipants?: number;
 }
 
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 function buildUrl(path: string): string {
   return `${API_BASE_URL}${path.startsWith('/') ? path : '/' + path}`;
@@ -239,6 +244,28 @@ export const api = {
       body: JSON.stringify(data)
     });
     // Handle backend response wrapper { success: true, data: { ... } }
+    if (res && res.data) {
+        return res.data;
+    }
+    return res;
+  },
+
+  getMeetingById: async (id: string, token: string): Promise<Meeting> => {
+    const res = await http<any>(`/meetings/${id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (res && res.data) {
+        return res.data;
+    }
+    return res;
+  },
+
+  updateMeeting: async (id: string, data: Partial<Meeting>, token: string): Promise<Meeting> => {
+    const res = await http<any>(`/meetings/${id}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` },
+        body: JSON.stringify(data)
+    });
     if (res && res.data) {
         return res.data;
     }

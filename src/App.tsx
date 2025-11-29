@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import './App.css';
 import Login from './Pages/Login/Login';
 import Register from './Pages/Register/Register';
@@ -8,13 +8,21 @@ import AuthAction from './Pages/AuthAction/AuthAction';
 import PrivacyPolicy from './Pages/Legal/PrivacyPolicy';
 import DataDeletion from './Pages/Legal/DataDeletion';
 import Home from './Pages/Home/Home';
-import HostMeeting from './Pages/HostMeeting/HostMeeting'; // ⭐ NUEVA IMPORTACIÓN
+import HostMeeting from './Pages/HostMeeting/HostMeeting';
 import Footer from './components/Footer/Footer';
 import Profile from './Pages/Profile/Profile';
 import AboutUs from './Pages/AboutUs/AboutUs';
 import AuthProvider from './components/AuthProvider';
-
 import ProtectedRoute from './components/ProtectedRoute';
+
+// Component to conditionally render footer
+const FooterWrapper = () => {
+  const location = useLocation();
+  const isMeetingPage = location.pathname.startsWith('/meeting/');
+  
+  if (isMeetingPage) return null;
+  return <Footer />;
+};
 
 function App() {
   return (
@@ -52,7 +60,7 @@ function App() {
               <Route path="/about-us" element={<AboutUs />} />
             </Routes>
           </main>
-          <Footer />
+          <FooterWrapper />
         </div>
       </Router>
     </AuthProvider>
