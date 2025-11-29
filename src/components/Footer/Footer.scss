@@ -1,17 +1,9 @@
 .app-footer {
   background: linear-gradient(135deg, #1B2A41 0%, #274C77 100%);
   color: #ffffff;
-  padding: 40px 20px 20px;
+  padding: 60px 20px 30px; // Increased top padding for better spacing
   margin-top: auto;
   width: 100%;
-  max-width: 100%;
-  margin-left: 0;
-  margin-right: 0;
-  margin-bottom: 0;
-  box-sizing: border-box;
-  position: relative;
-  left: 0;
-  right: 0;
   flex-shrink: 0;
 
   .footer-content {
@@ -19,35 +11,54 @@
     margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 30px;
-    margin-bottom: 30px;
+    gap: 40px; // Increased gap
+    margin-bottom: 40px;
 
     @media (max-width: 768px) {
       grid-template-columns: 1fr;
-      gap: 20px;
+      gap: 30px;
+      text-align: center; // Center text on mobile for better look
     }
   }
 
   .footer-section {
+    display: flex;
+    flex-direction: column;
+    
+    // Special styling for brand section
+    &.brand-section {
+      @media (min-width: 769px) {
+        padding-right: 20px;
+      }
+    }
+
     .footer-title {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 700;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
       color: #A3CEF1;
+      letter-spacing: -0.5px;
     }
 
     .footer-description {
       font-size: 14px;
       line-height: 1.6;
-      color: rgba(255, 255, 255, 0.8);
-      margin: 0;
+      color: rgba(255, 255, 255, 0.7);
+      margin: 0 0 20px 0;
+      max-width: 300px;
+      
+      @media (max-width: 768px) {
+        margin: 0 auto 20px;
+      }
     }
 
     .footer-heading {
       font-size: 16px;
       font-weight: 600;
-      margin-bottom: 15px;
-      color: #A3CEF1;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      color: #ffffff;
     }
 
     .footer-links {
@@ -56,13 +67,13 @@
       margin: 0;
 
       li {
-        margin-bottom: 10px;
+        margin-bottom: 12px;
 
         a {
-          color: rgba(255, 255, 255, 0.8);
+          color: rgba(255, 255, 255, 0.6);
           text-decoration: none;
           font-size: 14px;
-          transition: all 0.3s ease;
+          transition: all 0.2s ease;
           display: inline-block;
 
           &:hover {
@@ -72,7 +83,7 @@
 
           &.active {
             color: #A3CEF1;
-            font-weight: 600;
+            font-weight: 500;
           }
         }
       }
@@ -81,16 +92,20 @@
     .social-links {
       display: flex;
       gap: 15px;
-      margin-top: 10px;
+      margin-top: auto; // Push to bottom if flex column
+      
+      @media (max-width: 768px) {
+        justify-content: center;
+      }
 
       .social-link {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
         display: flex;
         align-items: center;
         justify-content: center;
         background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
+        border-radius: 8px; // Modern rounded square look
         color: rgba(255, 255, 255, 0.8);
         transition: all 0.3s ease;
         text-decoration: none;
@@ -102,8 +117,8 @@
         }
 
         svg {
-          width: 20px;
-          height: 20px;
+          width: 18px;
+          height: 18px;
         }
       }
     }
@@ -111,14 +126,13 @@
 
   .footer-bottom {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 20px;
+    padding-top: 25px;
     text-align: center;
 
     .footer-copyright {
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.6);
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.4);
       margin: 0;
     }
   }
 }
-

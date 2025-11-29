@@ -1,328 +1,110 @@
-// ================================
-// 🎨 VARIABLES DE COLORES
-// ================================
-$azul-oscuro: #1B2A41;
-$azul-medio: #274C77;
-$azul-claro: #A3CEF1;
-$azul-boton: #A3CEF1;
-$azul-texto: #1B2A41;
-$azul-fondo: #E5F1FF;
-$gris-card: rgba(223, 220, 220, 0.95);
-$gris-oscuro: #1A1A1A;
-$gris-texto: #6D6D6D;
-$gris-placeholder: #9A9A9A;
-$gris-borde: #A3CEF1;
-$blanco: #FFFFFF;
-$azul-input: #466693;
-$azul-input-focus: #3A5680;
+// Pages/Register/Register.scss
 
+// Reutilizamos la estructura de Login para consistencia total
+// Podríamos importar Login.scss pero para flexibilidad mantengo archivo separado con mismas clases
 
-// ================================
-// ⭐ MIXIN BOTONES
-// ================================
-@mixin button-base {
-  width: 100%;
-  height: 38px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 600;
+.register-wrapper {
+  // Si Login usa .auth-container, usaremos ese mixin o estructura
   display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: #f0f4f9; // Mismo fondo
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
 }
 
-
-// ================================
-// 📌 RESET
-// ================================
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  overflow-x: hidden;
-  background: $azul-fondo;
-  min-height: 100vh;
-  position: relative;
-}
-
-
-// ================================
-// 🖥️ CONTENEDOR PRINCIPAL
-// → COPIADO DEL LOGIN (FUNCIONA PERFECTO)
-// ================================
-.register-wrapper {
+.register-card {
+  background: white;
+  width: 100%;
+  max-width: 520px; // Un poco más ancho que login por los campos dobles
+  padding: 40px;
+  border-radius: 28px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
   display: flex;
-  width: 90%;
-  max-width: 1200px;
-  height: 85vh;
-  min-height: 600px;
-  position: relative;
-  margin: 40px auto;
-  overflow: hidden;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-  border-radius: 20px;
-  background: $blanco;
+  flex-direction: column;
+  gap: 20px;
+  max-height: 95vh;
+  overflow-y: auto; // Por si la pantalla es pequeña verticalmente
 
-  @media (max-width: 768px) {
-    width: 95%;
-    height: auto;
-    min-height: auto;
-    flex-direction: column;
-    position: static;
-    transform: none;
+  @media (max-width: 600px) {
+    width: 100%;
+    height: 100%;
     border-radius: 0;
-    box-shadow: none;
-    margin: 20px auto;
+    padding: 24px;
   }
 }
 
-
-// ================================
-// 📸 COLUMNA IZQUIERDA (MISMA DEL LOGIN)
-// ================================
-.register-image-section {
-  width: 50%;
-  height: 100%;
-  background: $azul-medio;
-
-  @media (max-width: 768px) {
-    width: 100%;
-    height: 35vh;
-  }
-}
-
-.image-container {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.background-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-
-// ================================
-// 🧩 COLUMNA DERECHA FORMULARIO
-// → ⭐ SOLUCIÓN FINAL: scroll únicamente aquí
-// ================================
-.register-form-section {
-  width: 50%;
-  height: 100%;
-  padding: 25px 45px;
-  background: linear-gradient(135deg, #1B2A41 0%, #274C77 50%, #A3CEF1 100%);
-  display: flex;
-  align-items: flex-start; // ⭐ SE PEGA ARRIBA PARA NO CORTARSE
-  justify-content: center;
-  overflow-y: auto;  // ⭐ SCROLL SOLO AQUÍ → SOLUCIÓN DEFINITIVA
-  overflow-x: hidden;
-
-  // scrollbar suave
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.4) transparent;
-
-  @media (max-width: 768px) {
-    width: 100%;
-    height: auto;
-    padding: 30px 40px;
-    overflow-y: auto;
-  }
-
-  @media (max-width: 480px) {
-    padding: 20px 30px;
-  }
-}
-
-
-// ================================
-// 🪟 TARJETA GLASSMORPHISM
-// ================================
-.register-form-card {
-  width: 350px;
-  background: $gris-card;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-}
-
-
-// ================================
-// 🔷 ICONO SUPERIOR
-// ================================
-.user-icon {
-  display: flex;
-  justify-content: center;
+.register-header {
+  text-align: center;
   margin-bottom: 8px;
 
-  .icon-container {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: $azul-medio;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 3px 8px rgba(39, 76, 119, 0.3);
+  .logo-img {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 12px;
+    object-fit: contain;
+  }
+
+  h1 {
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: var(--text-tertiary);
+    font-size: 15px;
   }
 }
 
-
-// ================================
-// 📝 TÍTULOS
-// ================================
-.register-title {
-  color: $gris-oscuro;
-  font-size: 20px;
-  font-weight: 700;
-  text-align: center;
-}
-
-.register-subtitle {
-  color: $gris-texto;
-  font-size: 12px;
-  text-align: center;
-  margin-bottom: 12px;
-}
-
-
-// ================================
-// ✏️ FORMULARIO / INPUTS
-// ================================
 .register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
-  .name-fields {
-    display: flex;
-    gap: 8px;
+.row-fields {
+  display: flex;
+  gap: 16px;
+  
+  .input-group { margin-bottom: 0; } // Reset margin inside row
 
-    @media (max-width: 480px) {
-      flex-direction: column;
-    }
-  }
-
-  .input-group {
-    margin-bottom: 10px;
-  }
-
-  .input-label {
-    font-size: 11px;
-    color: $gris-oscuro;
-    display: flex;
-    gap: 6px;
-    margin-bottom: 3px;
-  }
-
-  .form-input {
-    width: 100%;
-    height: 38px;
-    border-radius: 10px;
-    padding: 0 12px;
-    border: 2px solid $gris-borde;
-    background: rgba(70, 102, 147, 0.5);
-    color: white;
-    font-size: 12px;
-    transition: 0.2s ease;
-
-    &::placeholder {
-      color: white;
-    }
-
-    &:focus {
-      border-color: $azul-input-focus;
-      background: rgba(70, 102, 147, 0.7);
-    }
-  }
-
-  // Contraseñas con botón
-  .password-container {
-    position: relative;
-
-    .password-input {
-      padding-right: 38px;
-    }
-
-    .toggle-password {
-      position: absolute;
-      top: 50%;
-      right: 10px;
-      transform: translateY(-50%);
-      font-size: 14px;
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 16px;
   }
 }
 
-
-// ================================
-// 🔘 BOTONES
-// ================================
-.btn {
-  @include button-base;
-
-  &:hover {
-    transform: translateY(-1px);
-  }
-
-  &-primary {
-    background: $azul-boton;
-    color: $azul-texto;
-  }
-
-  &-google,
-  &-microsoft {
-    background: $blanco;
-    border: 1px solid $gris-borde;
-    color: $gris-oscuro;
-  }
+.password-requirements {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+  line-height: 1.4;
 }
 
-
-// ================================
-// 🌐 SEPARADOR
-// ================================
-.divider {
+.error-banner {
+  background-color: #fce8e6;
+  color: #c5221f;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 12px 0;
-  font-size: 11px;
-  color: $gris-texto;
-
-  &::before,
-  &::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: $gris-borde;
-  }
 }
 
-
-// ================================
-// 🔗 ENLACE LOGIN
-// ================================
-.login-link {
+.register-footer {
   text-align: center;
-  margin-top: 12px;
-  font-size: 11px;
-  color: $gris-texto;
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--text-secondary);
 
   a {
-    color: #2A4A6F;
-    font-weight: 600;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 4px;
     cursor: pointer;
 
     &:hover { text-decoration: underline; }

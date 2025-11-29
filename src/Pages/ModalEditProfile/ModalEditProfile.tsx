@@ -1,104 +1,116 @@
-// Pages/ModalEditarPerfil.tsx
-import React, { useState } from "react";
-import "./ModalEditProfile.scss";
+import React, { useState } from 'react';
+import '../../styles/modals.scss'; // Use shared styles
 
 interface ModalEditProfileProps {
   onClose: () => void;
-  onSave: (data: any) => void;
+  initialData: {
+    firstName: string;
+    lastName: string;
+    age?: number;
+    email?: string;
+  };
+  onSave: (data: { firstName: string; lastName: string; age?: number; email?: string; password?: string }) => void;
 }
 
-const ModalEditProfile: React.FC<ModalEditProfileProps> = ({ onClose, onSave }) => {
-  const [nombre, setNombre] = useState("Ana María");
-  const [apellido, setApellido] = useState("García López");
-  const [correo, setCorreo] = useState("anagarcia12@gmail.com");
-  const [edad, setEdad] = useState("30");
-  const [password, setPassword] = useState("•••••••");
+const ModalEditProfile: React.FC<ModalEditProfileProps> = ({ onClose, initialData, onSave }) => {
+  const [firstName, setFirstName] = useState(initialData.firstName);
+  const [lastName, setLastName] = useState(initialData.lastName);
+  const [age, setAge] = useState(initialData.age?.toString() || '');
+  const [email, setEmail] = useState(initialData.email || '');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSave = () => {
-    const data = { nombre, apellido, correo, edad, password };
-    onSave(data);
-    onClose();
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave({ 
+        firstName, 
+        lastName, 
+        age: age ? parseInt(age) : undefined,
+        email,
+        password: password || undefined // Only send if changed
+    });
   };
 
   return (
-    <div className="editar-modal-overlay">
-      <div className="editar-modal">
-
-        <h2 className="editar-title">Editar Datos</h2>
-        <p className="editar-subtitle">Modifica tu información personal</p>
-
-        <div className="editar-form">
-
-          {/* Nombre */}
-          <label className="editar-label">
-            <span className="editar-label-text">👤 Nombre</span>
-            <input
-              type="text"
-              className="editar-input"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-            />
-          </label>
-
-          {/* Apellido */}
-          <label className="editar-label">
-            <span className="editar-label-text">👤 Apellido</span>
-            <input
-              type="text"
-              className="editar-input"
-              value={apellido}
-              onChange={(e) => setApellido(e.target.value)}
-            />
-          </label>
-
-          {/* Correo */}
-          <label className="editar-label">
-            <span className="editar-label-text">📧 Correo Electrónico</span>
-            <input
-              type="email"
-              className="editar-input"
-              value={correo}
-              onChange={(e) => setCorreo(e.target.value)}
-            />
-          </label>
-
-          {/* Edad */}
-          <label className="editar-label">
-            <span className="editar-label-text">🎂 Edad</span>
-            <input
-              type="number"
-              className="editar-input"
-              value={edad}
-              onChange={(e) => setEdad(e.target.value)}
-            />
-          </label>
-
-          {/* Contraseña */}
-          <label className="editar-label">
-            <span className="editar-label-text">🔐 Contraseña</span>
-            <input
-              type="password"
-              className="editar-input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </label>
-        </div>
-
-        <div className="editar-buttons">
-          <button className="editar-btn cancelar" onClick={onClose}>
-            CANCELAR
-          </button>
-
-          <button className="editar-btn guardar" onClick={handleSave}>
-            GUARDAR
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>Editar Perfil</h2>
+          <button className="close-btn" onClick={onClose}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
           </button>
         </div>
 
+        <form onSubmit={handleSubmit} className="modal-body" autoComplete="off">
+          <div style={{display: 'flex', gap: 16}}>
+            <div className="input-group">
+                <label>Nombre</label>
+                <input 
+                type="text" 
+                value={firstName} 
+                onChange={(e) => setFirstName(e.target.value)}
+                />
+            </div>
+            <div className="input-group">
+                <label>Apellido</label>
+                <input 
+                type="text" 
+                value={lastName} 
+                onChange={(e) => setLastName(e.target.value)}
+                />
+            </div>
+          </div>
+
+          <div className="input-group">
+            <label>Edad</label>
+            <input 
+              type="number" 
+              value={age} 
+              onChange={(e) => setAge(e.target.value)}
+            />
+          </div>
+
+          <div className="input-group">
+            <label>Correo Electrónico</label>
+            <input 
+              type="email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="input-group">
+            <label>Nueva Contraseña (Opcional)</label>
+            <div style={{position: 'relative'}}>
+                <input 
+                type={showPassword ? "text" : "password"} 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Dejar en blanco para mantener actual"
+                autoComplete="new-password"
+                />
+                <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{position:'absolute', right:10, top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', opacity:0.6}}
+                >
+                    {showPassword ? 
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                        : 
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    }
+                </button>
+            </div>
+          </div>
+
+          <div className="modal-footer">
+            <button type="button" className="btn btn-ghost" onClick={onClose}>Cancelar</button>
+            <button type="submit" className="btn btn-primary">Guardar Cambios</button>
+          </div>
+        </form>
       </div>
     </div>
   );
 };
 
 export default ModalEditProfile;
-
