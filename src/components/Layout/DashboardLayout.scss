@@ -1,0 +1,186 @@
+@import '../../Pages/Home/Home.scss';
+
+// =========================================
+// 📱 MOBILE HEADER & HAMBURGER MENU
+// =========================================
+
+.mobile-header-fixed {
+  display: none; // Hidden on desktop
+
+  @media (max-width: 768px) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 64px;
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 16px;
+    z-index: 1000;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .brand-logo-mobile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    img { height: 28px; width: auto; }
+    span { font-size: 18px; font-weight: 600; color: var(--text-primary); }
+  }
+
+  .hamburger-btn {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.mobile-menu-overlay {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: flex;
+    position: fixed;
+    top: 64px; // Below header
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 64px);
+    background: rgba(0, 0, 0, 0.5); // Dimmed background
+    z-index: 999;
+    animation: fadeIn 0.2s ease-out;
+    flex-direction: column;
+  }
+
+  .mobile-nav-content {
+    background: white;
+    width: 100%;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    animation: slideDown 0.3s ease-out;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+  }
+
+  .mobile-nav-item {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    svg {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2px;
+    }
+
+    &.active {
+      color: var(--primary);
+      background-color: #e0f2fe;
+      
+      svg {
+        stroke: var(--primary);
+      }
+    }
+
+    &.logout {
+      color: var(--error);
+      margin-top: 4px;
+      
+      svg {
+        stroke: var(--error);
+      }
+    }
+
+    &:hover {
+      background-color: #f1f5f9;
+    }
+  }
+
+  .mobile-nav-divider {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 4px 0;
+  }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// =========================================
+// 🖥️ DESKTOP SIDEBAR (Fix duplicate issues)
+// =========================================
+
+.sidebar {
+  width: 256px;
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  
+  @media (max-width: 768px) {
+    display: none !important; // Force hide on mobile
+  }
+}
+
+// Reset mobile nav controls from previous iterations
+.mobile-nav-controls, .mobile-bottom-nav {
+  display: none !important; 
+}
+
+// Adjust main area padding for new header
+.main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  overflow-y: auto;
+  height: 100vh;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+    padding-top: 80px; // Space for fixed header
+    padding-bottom: 20px; // No bottom nav anymore
+  }
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+
+  @media (max-width: 768px) {
+    margin-bottom: 24px;
+    // Hide avatar/profile pill on mobile header since it's in the menu or simplified
+    .user-profile-pill { display: none !important; }
+  }
+}

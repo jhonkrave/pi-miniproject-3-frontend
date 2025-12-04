@@ -1,174 +1,227 @@
-// Pages/Profile.tsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import useAuthStore from '../../stores/useAuthStore';
+import { api } from '../../lib/api';
+import { authService } from '../../lib/authService';
+import DashboardLayout from '../../components/Layout/DashboardLayout';
 import './Profile.scss';
-
-// 🔥 Importar modales
 import ModalEditProfile from '../ModalEditProfile/ModalEditProfile';
 import ModalDeleteAccount from '../ModalDeleteAccount/ModalDeleteAccount';
+import { useToast } from '../../context/ToastContext';
 
 const Profile: React.FC = () => {
-  const navigate = useNavigate();
+  const { user, setUser } = useAuthStore();
+  const { showToast } = useToast();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  // Estados para los modales
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  if (!user) return null;
 
-  // 🔵 Navegaciones
-  const handleLogout = () => navigate('/login');
-  const goHome = () => navigate('/home');
-  const goAbout = () => navigate('/sobre-nosotros');  // ⭐ NUEVO
-
-  // 🔵 Handler para guardar datos del perfil
-  const handleSaveProfile = (data: any) => {
-    // TODO: Implementar lógica para guardar los datos
-    console.log('Datos guardados:', data);
+  const getMemberSince = () => {
+    if (user.createdAt) {
+      return new Date(user.createdAt).toLocaleDateString();
+    }
+    if (user.metadata?.creationTime) {
+      return new Date(user.metadata.creationTime).toLocaleDateString();
+    }
+    return 'Recientemente';
   };
 
+  const handleSaveProfile = async (updatedData: any) => {
+      try {
+        const token = await authService.getIdToken();
+        if (!token || !user.uid) return;
+
+        // 1. Update Password if provided
+        if (updatedData.password && updatedData.password.trim().length > 0) {
+            try {
+                await authService.updateUserPassword(updatedData.password);
+                showToast("Contraseña actualizada", "success");
+            } catch (err) {
+                console.error("Password update error:", err);
+                if ((err as any).code === 'auth/requires-recent-login') {
+                    showToast("Para cambiar la contraseña debes volver a iniciar sesión", "error");
+                    // Optionally redirect to login or show re-auth modal
+                    return; 
+                }
+                showToast("Error al actualizar contraseña", "error");
+                return;
+            }
+        }
+
+        // 2. Update Email if changed
+        if (updatedData.email && updatedData.email !== user.email) {
+            try {
+                await authService.verifyBeforeUpdateEmail(updatedData.email);
+                showToast("Se ha enviado un correo de verificación a tu nueva dirección. Por favor confírmalo para aplicar el cambio.", "info");
+            } catch (err) {
+                console.error("Email update error:", err);
+                if ((err as any).code === 'auth/requires-recent-login') {
+                    showToast("Para cambiar el correo debes volver a iniciar sesión", "error");
+                    return;
+                }
+                showToast("Error al actualizar correo", "error");
+                return;
+            }
+        }
+
+        // 3. Update Backend Profile
+        let updatedUser;
+        try {
+            // Clean data before sending (remove password)
+            const { password, ...dataToSend } = updatedData;
+            
+            // Try to update existing profile
+            updatedUser = await api.updateProfile(user.uid, dataToSend, token);
+        } catch (updateError) {
+            // If user doesn't exist (404), try to create it
+            if ((updateError as any).status === 404) {
+                console.warn("User profile not found in backend (404), attempting to recreate...");
+                
+                const signupData = {
+                    ...updatedData,
+                    email: updatedData.email || user.email,
+                    uid: user.uid,
+                    // Ensure required fields are present
+                    firstName: updatedData.firstName || user.firstName || 'Usuario',
+                    lastName: updatedData.lastName || user.lastName || 'Nuevo',
+                    age: updatedData.age || 18
+                };
+                delete signupData.password; // Don't send password to backend signup if not needed/handled
+                
+                try {
+                    const signupResponse = await api.signup(signupData);
+                    updatedUser = signupResponse.user;
+                    showToast("Perfil recreado y actualizado correctamente", "success");
+                } catch (signupError) {
+                    if ((signupError as any).status === 409) {
+                         showToast("Error crítico: El correo ya existe en la base de datos con otro ID.", "error");
+                         return; 
+                    }
+                    throw signupError;
+                }
+            } else {
+                throw updateError;
+            }
+        }
+
+        if (updatedUser) {
+            setUser(updatedUser); // Update global store
+            setIsEditModalOpen(false); // Explicitly close modal
+            if (!updatedUser.firstName) showToast("Perfil actualizado", "success");
+        }
+        
+      } catch (error) {
+        console.error("Error updating profile:", error);
+        showToast("Error al actualizar el perfil", "error");
+      }
+  };
+
+  const handleDeleteAccount = async () => {
+      try {
+        const token = await authService.getIdToken();
+        if (!token || !user.uid) return;
+        
+        await api.deleteAccount(user.uid, token);
+        await authService.logout();
+        // Auth listener will redirect to login
+        showToast("Cuenta eliminada correctamente", "info");
+      } catch (error) {
+          console.error("Error deleting account:", error);
+          showToast("No se pudo eliminar la cuenta", "error");
+      }
+  }
+
   return (
-    <div className="home-wrapper">
-      <div className="home-full-section">
-        <div className="content-card">
-          <div className="card-content">
-
-            <div className="layout-container">
-
-              {/* MENÚ LATERAL */}
-              <aside className="side-menu">
-                <div className="menu-header">
-                  <img
-                    src="/Imagenes/logo.png"
-                    alt="TeamLink Logo"
-                    className="menu-logo"
-                  />
+    <DashboardLayout title="Mi Perfil" subtitle="Gestiona tu información personal">
+        
+        <div className="profile-grid">
+            
+            {/* Left Card */}
+            <div className="profile-card">
+                <div className="avatar-large">
+                    {user.firstName ? user.firstName[0] : (user.email?.[0].toUpperCase() || 'U')}
                 </div>
+                <h2>{user.firstName} {user.lastName}</h2>
+                <span className="user-email">{user.email}</span>
 
-                <nav className="menu-nav">
-                  <ul>
-                    <li className="menu-item" onClick={goHome}>
-                      <span className="menu-icon">🏠</span>
-                      <span className="menu-text">Home</span>
-                    </li>
+                <button className="btn btn-secondary" onClick={() => setIsEditModalOpen(true)} style={{width: '100%'}}>
+                    Editar Perfil
+                </button>
 
-                    <li className="menu-item active">
-                      <span className="menu-icon">👤</span>
-                      <span className="menu-text">Mi Perfil</span>
-                    </li>
+                <div className="divider"></div>
 
-                    {/* ⭐ AHORA SÍ FUNCIONA */}
-                    <li className="menu-item" onClick={goAbout}>
-                      <span className="menu-icon">ℹ️</span>
-                      <span className="menu-text">Sobre Nosotros</span>
-                    </li>
-                  </ul>
-                </nav>
-
-                <div className="menu-footer">
-                  <button className="logout-btn-menu" onClick={handleLogout}>
-                    <span className="logout-icon">🚪</span>
-                    Cerrar Sesión
-                  </button>
-                </div>
-              </aside>
-
-              {/* CONTENIDO PRINCIPAL */}
-              <main className="main-content profile-main">
-
-                {/* FOTO */}
-                <div className="profile-photo-container">
-                  <img
-                    src="/Imagenes/usuario.png"
-                    className="profile-photo"
-                    alt="Foto Usuario"
-                  />
-                </div>
-
-                {/* NOMBRE */}
-                <h1 className="profile-name">Ana María García López</h1>
-                <p className="profile-member">Miembro desde 10/11/2025</p>
-
-                <div className="profile-info-wrapper">
-
-                  {/* INFORMACIÓN PERSONAL */}
-                  <div className="profile-info-card">
-                    <div className="profile-info-header">
-                      <h3>Información Personal</h3>
-
-                      <button
-                        className="edit-btn"
-                        onClick={() => setEditModalOpen(true)}
-                      >
-                        Editar Datos
-                      </button>
+                <div className="profile-stats">
+                    <div>
+                        <strong>{user.age || '-'}</strong>
+                        <span>Edad</span>
                     </div>
-
-                    <div className="profile-info-grid">
-
-                      <div className="info-item">
-                        <span className="label">Nombre Completo</span>
-                        <span className="value">Ana María</span>
-                      </div>
-
-                      <div className="info-item">
-                        <span className="label">Apellido</span>
-                        <span className="value">García López</span>
-                      </div>
-
-                      <div className="info-item">
-                        <span className="label">Correo Electrónico</span>
-                        <span className="value">anagarcia12@gmail.com</span>
-                      </div>
-
-                      <div className="info-item">
-                        <span className="label">Edad</span>
-                        <span className="value">30</span>
-                      </div>
-
-                      <div className="info-item wide">
-                        <span className="label">Contraseña</span>
-                        <span className="value">•••••••</span>
-                      </div>
+                    <div>
+                        <strong>{getMemberSince()}</strong>
+                        <span>Miembro desde</span>
                     </div>
-                  </div>
-
-                  {/* ACCIONES */}
-                  <div className="profile-actions-card">
-                    <h3 className="actions-title">Acciones de Cuenta</h3>
-
-                    <button
-                      className="delete-account-btn"
-                      onClick={() => setDeleteModalOpen(true)}
-                    >
-                      🗑️ Eliminar Cuenta
-                    </button>
-
-                    <button className="logout-secondary-btn">
-                      🚪 Cerrar Sesión
-                    </button>
-                  </div>
-
                 </div>
-
-              </main>
             </div>
-          </div>
 
-          {/* MODAL EDITAR DATOS */}
-          {editModalOpen && (
-            <ModalEditProfile 
-              onClose={() => setEditModalOpen(false)}
-              onSave={handleSaveProfile}
-            />
-          )}
+            {/* Right Column */}
+            <div>
+                <div className="details-card">
+                    <div className="card-header">
+                        <h3>Información Personal</h3>
+                    </div>
+                    <div className="details-content">
+                        <div className="detail-item">
+                            <label>Nombre</label>
+                            <span>{user.firstName || '-'}</span>
+                        </div>
+                        <div className="detail-item">
+                            <label>Apellido</label>
+                            <span>{user.lastName || '-'}</span>
+                        </div>
+                        <div className="detail-item">
+                            <label>Correo Electrónico</label>
+                            <span>{user.email}</span>
+                        </div>
+                        <div className="detail-item">
+                            <label>ID de Usuario</label>
+                            <span style={{fontFamily: 'monospace', fontSize: 12}}>{user.uid}</span>
+                        </div>
+                    </div>
+                </div>
 
-          {/* MODAL ELIMINAR CUENTA */}
-          {deleteModalOpen && (
-            <ModalDeleteAccount onClose={() => setDeleteModalOpen(false)} />
-          )}
+                <div className="danger-zone">
+                    <div>
+                        <h4>Eliminar Cuenta</h4>
+                        <p>Esta acción es irreversible. Perderás todos tus datos.</p>
+                    </div>
+                    <button className="btn btn-danger" onClick={() => setIsDeleteModalOpen(true)}>
+                        Eliminar
+                    </button>
+                </div>
+            </div>
 
         </div>
-      </div>
-    </div>
+
+        {isEditModalOpen && (
+            <ModalEditProfile 
+                onClose={() => setIsEditModalOpen(false)}
+                initialData={{
+                    firstName: user.firstName || '',
+                    lastName: user.lastName || '',
+                    age: user.age,
+                    email: user.email
+                }}
+                onSave={handleSaveProfile}
+            />
+        )}
+
+        {isDeleteModalOpen && (
+            <ModalDeleteAccount 
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleDeleteAccount}
+            />
+        )}
+
+    </DashboardLayout>
   );
 };
 

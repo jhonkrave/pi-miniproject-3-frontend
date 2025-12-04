@@ -1,530 +1,125 @@
-// SECCIÓN 1: VARIABLES DE COLORES - ACTUALIZAR
-// =============================================
+// Pages/Login/Login.scss
 
-$azul-oscuro: #1B2A41;
-$azul-medio: #274C77;
-$azul-claro: #A3CEF1;
-$azul-boton: #A3CEF1;
-$azul-texto: #1B2A41;
-$azul-fondo: #E5F1FF;
-$gris-card: rgba(223, 220, 220, 0.95);
-$gris-oscuro: #1A1A1A;
-$gris-texto: #6D6D6D;
-$gris-placeholder: #9A9A9A;
-$gris-borde: #A3CEF1;
-$blanco: #FFFFFF;
-
-// ⭐⭐ COLORES MEJORADOS PARA INPUTS ⭐⭐
-$azul-input: #466693; // ⭐⭐ COLOR NUEVO PARA INPUTS ⭐⭐
-$azul-input-focus: #3A5680; // ⭐⭐ VERSIÓN MÁS OSCURA PARA FOCUS ⭐⭐
-
-// =============================================
-// SECCIÓN 2: MIXINS Y UTILIDADES
-// =============================================
-
-@mixin button-base {
-  width: 100%;
-  height: 38px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 600;
+.auth-container {
   display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: #f0f4f9;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
 }
 
-// =============================================
-// SECCIÓN 3: ESTILOS BASE Y RESET
-// =============================================
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  overflow-x: hidden;
-  background: $azul-fondo;
-  min-height: 100vh;
-  position: relative;
-}
-
-// =============================================
-// SECCIÓN 4: LAYOUT PRINCIPAL MEJORADO
-// =============================================
-
-.login-wrapper {
+.auth-card {
+  background: white;
+  width: 100%;
+  max-width: 448px; // Google auth standard width
+  padding: 48px 40px 36px;
+  border-radius: 28px; // Modern rounded look
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
   display: flex;
-  width: 90%;
-  max-width: 1200px;
-  height: 85vh;
-  min-height: 600px;
-  position: relative;
-  margin: 40px auto;
-  overflow: hidden;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-  border-radius: 20px;
-  background: $blanco;
+  flex-direction: column;
+  gap: 24px;
 
-  @media (max-width: 768px) {
-    width: 95%;
-    height: auto;
-    min-height: 100vh;
-    flex-direction: column;
-    position: static;
-    transform: none;
+  @media (max-width: 480px) {
+    width: 100%;
+    height: 100%;
     border-radius: 0;
-    box-shadow: none;
-    margin: 0 auto;
-  }
-}
-
-/* COLUMNA IZQUIERDA - IMAGEN HORIZONTAL */
-.login-image-section {
-  width: 50%;
-  height: 100%;
-  padding: 0;
-  background: $azul-medio;
-
-  @media (max-width: 768px) {
-    width: 100%;
-    height: 40vh;
-  }
-}
-
-.image-container {
-  width: 100%;
-  height: 100%;
-  border-radius: 0;
-  overflow: hidden;
-  box-shadow: none;
-  background: $azul-medio;
-}
-
-.background-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  background: $azul-medio;
-}
-
-/* COLUMNA DERECHA - FORMULARIO HORIZONTAL */
-.login-form-section {
-  width: 50%;
-  height: 100%;
-  padding: 30px 50px;
-  // ⭐⭐ GRADIENTE PROFESIONAL RESTAURADO ⭐⭐
-  background: linear-gradient(135deg, #1B2A41 0%, #274C77 50%, #A3CEF1 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  // ⭐⭐ QUITAR ESTA LÍNEA QUE SOBRESCRIBE EL GRADIENTE ⭐⭐
-  // background: $azul-medio; // ← ELIMINAR ESTA LÍNEA
-
-  @media (max-width: 768px) {
-    width: 100%;
-    height: auto;
-    min-height: 60vh;
-    padding: 30px 40px;
-  }
-
-  @media (max-width: 480px) {
-    min-height: 70vh;
-    padding: 20px 30px;
-  }
-}
-
-// =============================================
-// SECCIÓN 5: TARJETA DEL FORMULARIO
-// =============================================
-
-.form-card {
-  width: 350px;
-  background: $gris-card;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-
-  @media (max-width: 480px) {
-    width: 100%;
-    max-width: 350px;
-    border-radius: 16px;
-    padding: 16px;
-    margin: 10px auto;
-  }
-}
-
-// =============================================
-// SECCIÓN 6: COMPONENTES
-// =============================================
-
-.security-icon {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 8px;
-
-  .icon-container {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: $azul-medio;
-    display: flex;
-    align-items: center;
+    padding: 24px;
     justify-content: center;
-    box-shadow: 0 3px 8px rgba(39, 76, 119, 0.3);
   }
 }
 
-.form-title {
-  color: $gris-oscuro;
-  font-size: 20px;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 2px;
-  line-height: 1.2;
-}
-
-.form-subtitle {
-  color: $gris-texto;
-  font-size: 12px;
-  font-weight: 400;
+.auth-header {
   text-align: center;
   margin-bottom: 12px;
-  line-height: 1.4;
-}
 
-// =============================================
-// SECCIÓN 7: FORMULARIO E INPUTS MEJORADOS
-// =============================================
+  .logo-img {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    object-fit: contain;
+  }
 
-.login-form {
-  .input-group {
+  h1 {
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--text-primary);
     margin-bottom: 8px;
   }
 
-  // ⭐⭐ ESTILOS PARA CAMPOS EN LÍNEA (NOMBRE Y APELLIDO) ⭐⭐
-  .name-fields {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 8px;
-
-    @media (max-width: 480px) {
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    & > div {
-      flex: 1;
-    }
-  }
-
-  .input-label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: $gris-oscuro;
-    font-size: 11px;
-    font-weight: 500;
-    margin-bottom: 3px;
-
-    .input-emoji {
-      font-size: 11px;
-    }
-  }
-
-  .form-input {
-    width: 100%;
-    height: 38px;
-    padding: 0 12px;
-    border: 2px solid $gris-borde;
-    border-radius: 10px;
-    // ⭐⭐ NUEVO COLOR DE FONDO CON 50% DE OPACIDAD ⭐⭐
-    background: rgba(70, 102, 147, 0.5); // #466693 al 50%
-    font-size: 12px;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-    color: $gris-oscuro;
-
-    &::placeholder {
-      color: #ffffff;
-      font-size: 12px;
-    }
-
-    &:focus {
-      outline: none;
-      border-color: $azul-input-focus;
-      // ⭐⭐ FONDO MÁS OSCURO EN FOCUS PARA MEJOR CONTRASTE ⭐⭐
-      background: rgba(70, 102, 147, 0.7);
-      box-shadow: 0 3px 8px rgba(70, 102, 147, 0.25);
-    }
-
-    &:not(:placeholder-shown) {
-      // ⭐⭐ FONDO MÁS DEFINIDO CUANDO HAY CONTENIDO ⭐⭐
-      background: rgba(70, 102, 147, 0.6);
-      border-color: rgba(70, 102, 147, 0.3);
-    }
-  }
-
-  .password-container {
-    position: relative;
-
-    .password-input {
-      padding-right: 38px;
-    }
-
-    .toggle-password {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 12px;
-      width: 18px;
-      height: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 3px;
-      color: $gris-texto;
-      transition: all 0.2s;
-
-      &:hover {
-        background: rgba(0, 0, 0, 0.05);
-        color: $gris-oscuro;
-      }
-    }
+  p {
+    color: var(--text-tertiary);
+    font-size: 16px;
   }
 }
 
-// =============================================
-// SECCIÓN 8: OPCIONES MEJORADAS
-// =============================================
-
-.form-options {
+.auth-form {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 5px;
-  margin-bottom: 12px;
-
-  @media (max-width: 480px) {
-    flex-direction: column;
-    gap: 8px;
-    align-items: flex-start;
-  }
-
-  .remember-me {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-
-    .checkbox {
-      width: 13px;
-      height: 13px;
-      border-radius: 3px;
-      border: 2px solid $gris-texto;
-      appearance: none;
-      cursor: pointer;
-      position: relative;
-      transition: all 0.2s ease;
-
-      &:checked {
-        background: $azul-medio;
-        border-color: $azul-medio;
-
-        &::after {
-          content: '✓';
-          color: $blanco;
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          font-size: 8px;
-          font-weight: bold;
-        }
-      }
-
-      &:hover {
-        border-color: $azul-medio;
-      }
-    }
-
-    .checkbox-label {
-      color: $gris-texto;
-      font-size: 11px;
-      cursor: pointer;
-      user-select: none;
-
-      a {
-        color: #2A4A6F;
-        text-decoration: none;
-        font-weight: 600;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
-  }
-
-  .forgot-password {
-    color: #2A4A6F;
-    font-size: 11px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.2s;
-    cursor: pointer;
-
-    &:hover {
-      color: darken(#2A4A6F, 15%);
-      text-decoration: underline;
-    }
-  }
+  flex-direction: column;
+  gap: 16px;
 }
 
-// =============================================
-// SECCIÓN 9: BOTONES
-// =============================================
-
-.btn {
-  @include button-base;
-  transition: all 0.3s ease;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
-  &-primary {
-    background: $azul-boton;
-    color: $azul-texto;
-    margin-bottom: 5px;
-  }
-
-  &-google {
-    background: $blanco;
-    color: $gris-oscuro;
-    border: 1px solid $gris-borde;
-    margin-bottom: 5px;
-  }
-
-  &-facebook {
-    background: $blanco;
-    color: #1877F2;
-    border: 1px solid $gris-borde;
-    margin-bottom: 5px;
-  }
-
-  &-create-account {
-    background: $azul-boton;
-    color: $azul-texto;
-    margin-top: 5px;
-  }
-}
-
-// =============================================
-// SECCIÓN 10: ELEMENTOS ADICIONALES
-// =============================================
-
-.social-icon {
-  width: 14px;
-  height: 14px;
-}
-
-.btn-emoji {
-  font-size: 11px;
+.auth-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
 }
 
 .divider {
   display: flex;
   align-items: center;
-  margin: 10px 0;
-  color: $gris-texto;
-  font-size: 11px;
-  font-weight: 500;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 14px;
+  margin: 8px 0;
 
   &::before,
   &::after {
-    content: "";
+    content: '';
     flex: 1;
-    height: 1px;
-    background: $gris-borde;
+    border-bottom: 1px solid var(--border-color);
   }
-
-  span {
-    padding: 0 8px;
-  }
+  
+  &::before { margin-right: .5em; }
+  &::after { margin-left: .5em; }
 }
 
 .social-buttons {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-bottom: 0px;
-}
-
-// =============================================
-// SECCIÓN 11: RESPONSIVE
-// =============================================
-
-@media (max-width: 480px) {
-  .form-title {
-    font-size: 18px;
-  }
-
-  .form-subtitle {
-    font-size: 11px;
-    margin-bottom: 10px;
-  }
-
-  .security-icon .icon-container {
-    width: 42px;
-    height: 42px;
-  }
-
-  .btn {
-    font-size: 12px;
-    height: 36px;
-  }
-
-  .form-input {
-    font-size: 11px;
-    height: 36px;
-  }
-
-  // ⭐⭐ ALTURA ESPECIAL PARA REGISTRO EN MÓVIL ⭐⭐
-  .login-form-section {
-    min-height: 75vh;
-  }
-}
-
-// ⭐⭐ ESTILOS PARA DEBUG (QUITAR EN PRODUCCIÓN) ⭐⭐
-.debug-info {
-  margin-top: 10px;
-  padding: 8px;
-  background: #f8f9fa;
-  border-radius: 5px;
-  font-size: 10px;
-  color: #666;
-  border: 1px solid #e9ecef;
+  gap: 12px;
   
-  strong {
-    color: #495057;
+  button {
+    flex: 1;
+    font-size: 14px;
   }
+}
+
+.auth-footer-link {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--text-secondary);
+
+  a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 4px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.error-banner {
+  background-color: #fce8e6;
+  color: #c5221f;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
