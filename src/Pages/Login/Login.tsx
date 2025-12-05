@@ -102,7 +102,7 @@ const Login: React.FC<LoginProps> = ({ onGoToRegister, onGoToForgotPassword }) =
     }
   };
 
-  const handleFacebookLogin = async () => {
+ /*  const handleFacebookLogin = async () => {
     setError(null);
     setLoading(true);
     try {
@@ -113,7 +113,7 @@ const Login: React.FC<LoginProps> = ({ onGoToRegister, onGoToForgotPassword }) =
       setLoading(false);
       setError("No se pudo iniciar sesión con Facebook.");
     }
-  };
+  }; */
 
   const goToRegister = () => {
     if (onGoToRegister) onGoToRegister();
