@@ -1,6 +1,6 @@
 // firebase/firebaseConfig.ts
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, FacebookAuthProvider } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, FacebookAuthProvider, GithubAuthProvider } from "firebase/auth";
 
 // Configuracion directa para pruebas
 // Nota: En produccion real esto deberia ir en variables de entorno .env
@@ -22,4 +22,5 @@ export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 
 export const facebookProvider = new FacebookAuthProvider();
-// No hace falta custom parameters para Facebook
+
+export const githubProvider = new GithubAuthProvider();

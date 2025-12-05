@@ -9,9 +9,12 @@ import {
   verifyBeforeUpdateEmail,
   confirmPasswordReset,
   applyActionCode,
-  checkActionCode
+  checkActionCode,
+  linkWithPopup,
+  fetchSignInMethodsForEmail
 } from 'firebase/auth';
-import { auth, googleProvider, facebookProvider } from './firebaseConfig';
+import type { AuthError } from 'firebase/auth';
+import { auth, googleProvider, facebookProvider, githubProvider } from './firebaseConfig';
 import { api, type User } from './api';
 
 /**
@@ -112,6 +115,13 @@ export const authService = {
     return result.user;
   },
 
+  async linkGoogleProvider() {
+    const result = await linkWithPopup(auth.currentUser!, googleProvider);
+    return result.user;
+  },
+
+  
+
   /**
    * Login with Facebook
    */
@@ -201,5 +211,48 @@ export const authService = {
     const user = auth.currentUser;
     if (!user) return null;
     return await user.getIdToken();
+  },
+
+  /**
+   * Login with Github
+   * Handles the case where the account exists with another authentication method
+   */
+  async loginWithGithub() {
+
+      const result = await signInWithPopup(auth, githubProvider);
+      return result.user;
+    
+  },
+
+  /**
+   * Links GitHub to the currently authenticated user's account.
+   * Should be called after the user authenticates with their primary method.
+   */
+  async linkGithubProvider() {
+    try {
+      const result = await linkWithPopup(auth.currentUser!, githubProvider);
+      return result.user;
+    } catch (error) {
+      const authError = error as AuthError;
+      
+      
+      if (authError.code === 'auth/provider-already-linked') {
+        throw new Error('GitHub ya está vinculado a esta cuenta');
+      }
+      
+      
+      if (authError.code === 'auth/credential-already-in-use') {
+        throw new Error('Esta cuenta de GitHub ya está vinculada a otra cuenta');
+      }
+      
+      throw error;
+    }
+  },
+
+  /**
+   * Gets the available authentication methods for an email address
+   */
+  async getSignInMethodsForEmail(email: string): Promise<string[]> {
+    return await fetchSignInMethodsForEmail(auth, email);
   }
 };

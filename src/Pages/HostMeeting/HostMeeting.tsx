@@ -7,6 +7,7 @@ import '../../styles/modals.scss';
 import { chatService, type ChatMessage } from '../../lib/chatService';
 import { api, type Meeting } from '../../lib/api';
 import { authService } from '../../lib/authService';
+import { streamService } from '../../lib/streamService';
 import { useToast } from '../../context/ToastContext';
 
 const HostMeeting: React.FC = () => {
@@ -29,6 +30,13 @@ const HostMeeting: React.FC = () => {
   const [micOn, setMicOn] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
+  
+  // Refs for video elements
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteVideoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
+  
+  // State for remote streams
+  const [remoteStreams, setRemoteStreams] = useState<Record<string, MediaStream>>({});
   
   // Mock devices list
   const [audioInput, setAudioInput] = useState("default");
@@ -117,6 +125,64 @@ const HostMeeting: React.FC = () => {
             // 2. Connect to Chat
             chatService.connect(token);
             chatService.joinRoom(id, user.uid);
+
+            // 3. Connect to WebRTC Stream Service
+            try {
+              await streamService.connect(token);
+              await streamService.initializeMediaStream(micOn, cameraOn);
+              
+              // Configurar callbacks para streams remotos
+              streamService.onRemoteStream((userId, stream) => {
+                console.log('Stream remoto recibido de:', userId);
+                setRemoteStreams(prev => ({ ...prev, [userId]: stream }));
+                
+                // Asegurar que el participante esté en la lista
+                setActiveParticipants(prev => {
+                  if (!prev.includes(userId)) return [...prev, userId];
+                  return prev;
+                });
+                
+                // Asignar el stream al elemento de video
+                const videoElement = remoteVideoRefs.current[userId];
+                if (videoElement && stream) {
+                  videoElement.srcObject = stream;
+                }
+              });
+              
+              streamService.onPeerDisconnected((userId) => {
+                console.log('Peer desconectado:', userId);
+                setRemoteStreams(prev => {
+                  const newStreams = { ...prev };
+                  delete newStreams[userId];
+                  return newStreams;
+                });
+                
+                // Limpiar el elemento de video
+                const videoElement = remoteVideoRefs.current[userId];
+                if (videoElement) {
+                  videoElement.srcObject = null;
+                }
+              });
+              
+              streamService.onError((error) => {
+                console.error('Error en streamService:', error);
+                showToast('Error en la conexión de video', 'error');
+              });
+              
+              // Unirse a la sala de WebRTC
+              streamService.joinRoom(id, user.uid);
+              
+              // Configurar el video local
+              const localStream = streamService.getLocalStream();
+              if (localStream && localVideoRef.current) {
+                localVideoRef.current.srcObject = localStream;
+              }
+              
+              console.log('WebRTC stream service conectado');
+            } catch (streamError) {
+              console.error('Error al conectar WebRTC stream service:', streamError);
+              showToast('No se pudo conectar el video. El chat seguirá funcionando.', 'info');
+            }
 
             // Set up listeners
             // IMPORTANT: We assign this to a variable to cleanup specifically this listener if needed,
@@ -227,11 +293,16 @@ const HostMeeting: React.FC = () => {
     }
 
     return () => {
-        if (id) chatService.leaveRoom(id);
+        if (id) {
+          chatService.leaveRoom(id);
+          streamService.leaveRoom(id);
+        }
         chatService.offMessage();
         chatService.offUserJoined();
         chatService.offUserLeft();
         chatService.disconnect();
+        streamService.removeCallbacks();
+        streamService.disconnect();
     };
   }, [id, user, isLoading, navigate, showToast]);
 
@@ -241,6 +312,25 @@ const HostMeeting: React.FC = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, showChat]);
+
+  // Effect to update video elements when remote streams change
+  useEffect(() => {
+    Object.keys(remoteStreams).forEach(userId => {
+      const videoElement = remoteVideoRefs.current[userId];
+      const stream = remoteStreams[userId];
+      if (videoElement && stream) {
+        videoElement.srcObject = stream;
+      }
+    });
+  }, [remoteStreams]);
+
+  // Effect to update the local video when the camera state changes
+  useEffect(() => {
+    const localStream = streamService.getLocalStream();
+    if (localStream && localVideoRef.current) {
+      localVideoRef.current.srcObject = localStream;
+    }
+  }, [cameraOn, micOn]);
 
   const toggleChat = () => {
       setShowChat(!showChat);
@@ -261,6 +351,12 @@ const HostMeeting: React.FC = () => {
   };
 
   const confirmExit = async () => {
+      // Desconectar de WebRTC stream service
+      if (id) {
+        streamService.leaveRoom(id);
+        streamService.disconnect();
+      }
+      
       if (id) chatService.leaveRoom(id);
       
       // Remove self from participants list in backend
@@ -298,6 +394,9 @@ const HostMeeting: React.FC = () => {
           {/* Render ALL active participants including me */}
           {activeParticipants.map((participantId, index) => {
              const isMe = participantId === user?.uid;
+             const remoteStream = remoteStreams[participantId];
+             const hasVideo = isMe ? cameraOn : (remoteStream?.getVideoTracks().length > 0 && remoteStream.getVideoTracks()[0].enabled);
+             const hasAudio = isMe ? micOn : (remoteStream?.getAudioTracks().length > 0 && remoteStream.getAudioTracks()[0].enabled);
              
              // Try to find name
              const msgInfo = messages.find(m => m.senderId === participantId);
@@ -306,30 +405,62 @@ const HostMeeting: React.FC = () => {
              const avatarLetter = displayName[0]?.toUpperCase() || 'U';
 
              return (
-                <div key={participantId} className={`video-box ${isMe ? 'host-box' : 'remote-box'} ${!cameraOn && isMe ? 'camera-off' : ''}`} 
+                <div key={participantId} className={`video-box ${isMe ? 'host-box' : 'remote-box'} ${!hasVideo ? 'camera-off' : ''}`} 
                      style={{ maxWidth: activeParticipants.length > 1 ? '45%' : '600px' }}>
                     
-                    {isMe && !cameraOn ? (
-                        <div className="avatar-placeholder">
+                    {/* Video local */}
+                    {isMe && (
+                      <video
+                        ref={localVideoRef}
+                        autoPlay
+                        playsInline
+                        muted
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          display: hasVideo ? 'block' : 'none'
+                        }}
+                      />
+                    )}
+                    
+                    {/* Video remoto */}
+                    {!isMe && (
+                      <video
+                        ref={(el) => {
+                          remoteVideoRefs.current[participantId] = el;
+                          if (el && remoteStream) {
+                            el.srcObject = remoteStream;
+                          }
+                        }}
+                        autoPlay
+                        playsInline
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          display: hasVideo ? 'block' : 'none'
+                        }}
+                      />
+                    )}
+                    
+                    {/* Avatar placeholder cuando no hay video */}
+                    {!hasVideo && (
+                        <div className="avatar-placeholder" style={{ backgroundColor: isMe ? '#ea4335' : `hsl(${(index * 60) % 360}, 70%, 50%)` }}>
                            {avatarLetter}
                         </div>
-                    ) : isMe && cameraOn ? (
-                         <div className="video-placeholder-content">
-                            (Tu Cámara)
-                         </div>
-                    ) : (
-                         <div className="avatar-placeholder" style={{ backgroundColor: `hsl(${(index * 60) % 360}, 70%, 50%)` }}>
-                            {avatarLetter}
-                         </div>
                     )}
 
                     <span className="participant-label">{displayName}</span>
                     
-                    {isMe && (
+                    {/* Indicador de micrófono */}
+                    {!hasAudio && (
                         <div className="mic-status">
-                            {!micOn && (
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path></svg>
-                            )}
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
+                              <line x1="1" y1="1" x2="23" y2="23"></line>
+                              <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+                              <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path>
+                            </svg>
                         </div>
                     )}
                 </div>
@@ -412,7 +543,15 @@ const HostMeeting: React.FC = () => {
             {/* MICRÓFONO */}
             <button 
               className={`control-btn ${!micOn ? 'btn-danger' : ''}`}
-              onClick={() => setMicOn(!micOn)}
+              onClick={() => {
+                setMicOn(!micOn);
+                // Controlar el stream de audio
+                if (micOn) {
+                  streamService.disableAudio();
+                } else {
+                  streamService.enableAudio();
+                }
+              }}
               title={micOn ? "Desactivar micrófono" : "Activar micrófono"}
             >
               {micOn ? (
@@ -425,7 +564,15 @@ const HostMeeting: React.FC = () => {
             {/* CÁMARA */}
             <button 
               className={`control-btn ${!cameraOn ? 'btn-danger' : ''}`}
-              onClick={() => setCameraOn(!cameraOn)}
+              onClick={() => {
+                setCameraOn(!cameraOn);
+                // Controlar el stream de video
+                if (cameraOn) {
+                  streamService.disableVideo();
+                } else {
+                  streamService.enableVideo();
+                }
+              }}
               title={cameraOn ? "Desactivar cámara" : "Activar cámara"}
             >
               {cameraOn ? (
