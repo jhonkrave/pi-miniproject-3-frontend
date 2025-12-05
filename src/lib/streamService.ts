@@ -146,6 +146,19 @@ class StreamService {
   }
 
   /**
+   * Determines if this peer should be the initiator for a connection
+   * Uses deterministic logic based on user IDs to avoid conflicts
+   * @param {string} otherUserId - The other user's ID
+   * @returns {boolean} True if this peer should be the initiator
+   * @private
+   */
+  private shouldBeInitiator(otherUserId: string): boolean {
+    if (!this.currentUserId) return false;
+    // Deterministic: peer with lexicographically smaller ID is initiator
+    return this.currentUserId < otherUserId;
+  }
+
+  /**
    * Sets up socket event listeners
    * @private
    */
@@ -153,11 +166,15 @@ class StreamService {
     if (!this.socket) return;
 
     // Event when a new peer joins the room
-    // If someone else joins, we (who were already there) are the initiator
+    // Create connection with deterministic initiator logic
     this.socket.on('peer-joined', (payload: PeerJoinedPayload) => {
       console.log('StreamService: Peer joined', payload);
       if (payload.userId !== this.currentUserId && payload.roomId === this.currentRoomId) {
-        this.createPeerConnection(payload.userId, payload.socketId, true);
+        // Only create connection if it doesn't exist
+        if (!this.peers[payload.userId]) {
+          const isInitiator = this.shouldBeInitiator(payload.userId);
+          this.createPeerConnection(payload.userId, payload.socketId, isInitiator);
+        }
       }
     });
 
@@ -171,25 +188,67 @@ class StreamService {
     });
 
     // Event with the list of existing peers in the room
-    // If we just joined and there are other peers, we are the initiator
+    // Create connections with all existing peers using deterministic initiator logic
     this.socket.on('room-peers', (payload: RoomPeersPayload) => {
       console.log('StreamService: Peers in room', payload);
       if (payload.roomId === this.currentRoomId) {
         payload.peers.forEach(peer => {
-          if (peer.userId !== this.currentUserId) {
-            this.createPeerConnection(peer.userId, peer.socketId, true);
+          if (peer.userId !== this.currentUserId && !this.peers[peer.userId]) {
+            const isInitiator = this.shouldBeInitiator(peer.userId);
+            this.createPeerConnection(peer.userId, peer.socketId, isInitiator);
           }
         });
       }
     });
 
-    // WebRTC signal event
+    // WebRTC signal event - handles offer, answer, and ICE candidates
     this.socket.on('webrtc-signal', (payload: WebRTCSignalPayload) => {
       console.log('StreamService: WebRTC signal received', payload);
       if (payload.roomId === this.currentRoomId && payload.fromUserId !== this.currentUserId) {
         const peerConn = this.peers[payload.fromUserId];
-        if (peerConn && peerConn.peerConnection) {
-          peerConn.peerConnection.signal(payload.signal);
+        
+        if (!peerConn) {
+          console.warn(`StreamService: Received signal from unknown peer ${payload.fromUserId}, creating connection...`);
+          // If we receive a signal but don't have a connection, create one
+          // The other peer is likely the initiator if they're sending signals
+          const isInitiator = this.shouldBeInitiator(payload.fromUserId);
+          this.createPeerConnection(payload.fromUserId, payload.fromSocketId, isInitiator);
+          // Wait a bit for connection to be ready, then process signal
+          setTimeout(() => {
+            const newPeerConn = this.peers[payload.fromUserId];
+            if (newPeerConn && newPeerConn.peerConnection && !newPeerConn.peerConnection.destroyed) {
+              try {
+                newPeerConn.peerConnection.signal(payload.signal);
+              } catch (error) {
+                console.error(`StreamService: Error processing delayed signal from ${payload.fromUserId}:`, error);
+              }
+            }
+          }, 100);
+          return;
+        }
+
+        if (peerConn.peerConnection) {
+          // Validate connection is still active
+          if (peerConn.peerConnection.destroyed) {
+            console.warn(`StreamService: Ignoring signal for destroyed connection with ${payload.fromUserId}`);
+            return;
+          }
+
+          try {
+            // Process the signal (offer, answer, or ICE candidate)
+            peerConn.peerConnection.signal(payload.signal);
+          } catch (error) {
+            console.error(`StreamService: Error processing signal from ${payload.fromUserId}:`, error);
+            
+            // If it's a state error, try to recover
+            if (error instanceof Error && error.message.includes('wrong state')) {
+              console.warn(`StreamService: Connection state error with ${payload.fromUserId}, attempting recovery...`);
+              // Don't recreate immediately to avoid loops, just log the error
+              if (this.onErrorCallback) {
+                this.onErrorCallback(new Error(`Connection state error with ${payload.fromUserId}: ${error.message}`));
+              }
+            }
+          }
         }
       }
     });
@@ -274,6 +333,7 @@ class StreamService {
 
   /**
    * Creates a Peer connection with another user
+   * This establishes a bidirectional P2P connection for audio/video sharing
    * @param {string} userId - The user ID to connect with
    * @param {string} socketId - The socket ID of the peer
    * @param {boolean} isInitiator - Whether this peer is the initiator
@@ -291,14 +351,21 @@ class StreamService {
       return;
     }
 
-    console.log(`StreamService: Creating Peer connection with ${userId} (initiator: ${isInitiator})`);
+    if (!this.currentUserId) {
+      console.error('StreamService: Current user ID not set');
+      return;
+    }
+
+    console.log(`StreamService: Creating P2P connection with ${userId} (initiator: ${isInitiator}, role: ${isInitiator ? 'offerer' : 'answerer'})`);
 
     const iceServers = this.getIceServers();
     
+    // Create Simple-peer instance with local media stream
+    // This will share both audio and video tracks
     const peer = new Peer({
       initiator: isInitiator,
-      trickle: false,
-      stream: this.localMediaStream,
+      trickle: true, // Enable trickle ICE for faster connection establishment
+      stream: this.localMediaStream, // Share local audio/video stream
       config: {
         iceServers: iceServers
       }
@@ -314,9 +381,17 @@ class StreamService {
 
     this.peers[userId] = peerConn;
 
-    // When the signal is ready, send it to the server
+    // When the signal is ready (offer, answer, or ICE candidate), send it to the server
     peer.on('signal', (signal: any) => {
-      console.log(`StreamService: Signal generated for ${userId}`, signal);
+      // Only send signal if connection is still active
+      if (peer.destroyed) {
+        console.warn(`StreamService: Not sending signal for destroyed connection with ${userId}`);
+        return;
+      }
+      
+      const signalType = signal.type || (signal.sdp ? (signal.sdp.includes('offer') ? 'offer' : 'answer') : 'candidate');
+      console.log(`StreamService: Signal generated for ${userId} (type: ${signalType})`, signal);
+      
       if (this.socket?.connected && this.currentRoomId) {
         this.socket.emit('webrtc-signal', {
           roomId: this.currentRoomId,
@@ -326,21 +401,37 @@ class StreamService {
       }
     });
 
-    // When remote stream is received
+    // When remote stream is received (audio/video from the other peer)
     peer.on('stream', (remoteStream: MediaStream) => {
-      console.log(`StreamService: Remote stream received from ${userId}`);
+      console.log(`StreamService: Remote stream received from ${userId}`, {
+        audioTracks: remoteStream.getAudioTracks().length,
+        videoTracks: remoteStream.getVideoTracks().length
+      });
       peerConn.isConnected = true;
       peerConn.isConnecting = false;
       
+      // Notify callback with the remote stream (contains both audio and video)
       if (this.onRemoteStreamCallback) {
         this.onRemoteStreamCallback(userId, remoteStream);
       }
+    });
+
+    // Connection established successfully
+    peer.on('connect', () => {
+      console.log(`StreamService: P2P connection established with ${userId}`);
+      peerConn.isConnected = true;
+      peerConn.isConnecting = false;
     });
 
     // Error handling
     peer.on('error', (error: Error) => {
       console.error(`StreamService: Error in Peer connection with ${userId}`, error);
       peerConn.isConnecting = false;
+      
+      // Handle specific error types
+      if (error.message && error.message.includes('wrong state')) {
+        console.warn(`StreamService: State error with ${userId} - connection may need to be recreated`);
+      }
       
       if (this.onErrorCallback) {
         this.onErrorCallback(error);
@@ -349,8 +440,13 @@ class StreamService {
 
     // When connection closes
     peer.on('close', () => {
-      console.log(`StreamService: Connection closed with ${userId}`);
+      console.log(`StreamService: P2P connection closed with ${userId}`);
       this.removePeer(userId);
+    });
+
+    // Handle data channel if needed in the future
+    peer.on('data', (data: any) => {
+      console.log(`StreamService: Data received from ${userId}`, data);
     });
   }
 
