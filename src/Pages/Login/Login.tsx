@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../lib/authService';
 import useAuthStore from '../../stores/useAuthStore'; // Import Zustand store
+import { useToast } from '../../context/ToastContext';
 import './Login.scss';
 
 interface LoginProps {
@@ -15,17 +16,51 @@ const Login: React.FC<LoginProps> = ({ onGoToRegister, onGoToForgotPassword }) =
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [pendingGithubLink, setPendingGithubLink] = useState(false);
   const navigate = useNavigate();
+  const { showToast } = useToast();
   
   // Watch user state from store
   const { user } = useAuthStore();
 
+  // Función para vincular GitHub después de autenticarse
+  const handleLinkGithub = useCallback(async () => {
+    if (!user) return;
+    
+    try {
+      setLoading(true);
+      await authService.linkGithubProvider();
+      setPendingGithubLink(false);
+      showToast('GitHub vinculado exitosamente', 'success');
+      navigate("/home", { replace: true });
+    } catch (err: any) {
+      console.error("Error al vincular GitHub:", err);
+      setLoading(false);
+      setPendingGithubLink(false);
+      
+      if (err.message?.includes('ya está vinculado')) {
+        showToast('GitHub ya está vinculado a esta cuenta', 'info');
+        navigate("/home", { replace: true });
+      } else {
+        setError("No se pudo vincular GitHub. Puedes hacerlo más tarde desde tu perfil.");
+        setTimeout(() => {
+          navigate("/home", { replace: true });
+        }, 2000);
+      }
+    }
+  }, [user, navigate, showToast]);
+
   // Effect to auto-redirect if user becomes authenticated
   useEffect(() => {
     if (user) {
+      // Si hay un link de GitHub pendiente, intentar vincularlo
+      if (pendingGithubLink) {
+        handleLinkGithub();
+      } else {
         navigate("/home", { replace: true }); // Use replace to prevent going back to login
+      }
     }
-  }, [user, navigate]);
+  }, [user, navigate, pendingGithubLink, handleLinkGithub]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +69,11 @@ const Login: React.FC<LoginProps> = ({ onGoToRegister, onGoToForgotPassword }) =
 
     try {
       await authService.loginWithEmail(email, password);
+      
+      // Después de autenticarse exitosamente, verificar si el usuario quiere vincular GitHub
+      // Esto se puede hacer automáticamente o con un prompt
+      // Por ahora, solo iniciamos sesión normalmente
+      
       // No need to navigate here manually, the useEffect will handle it when auth state updates
     } catch (err) {
       console.error("Login Error:", err);
@@ -83,6 +123,44 @@ const Login: React.FC<LoginProps> = ({ onGoToRegister, onGoToForgotPassword }) =
   const goToForgotPassword = () => {
     if (onGoToForgotPassword) onGoToForgotPassword();
     else navigate('/forgot-password');
+  };
+
+  const handleGithubLogin = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      await authService.loginWithGithub();
+      // useEffect will handle navigation
+    } catch (err: any) {
+      console.error("Github Login Error:", err);
+      setLoading(false);
+        
+        // Manejar el caso donde la cuenta existe con otro método
+      if (err.code === 'auth/account-exists-with-different-credential') {
+        const email = err.email;
+      // Try to link Github to the existing email
+      if (email) {
+        try {
+          await authService.linkGithubProvider();
+          // If the link is successful, the navigation will be handled by useEffect
+        } catch (linkErr: any) {
+          // If the linking fails, show specific or generic error
+          if (linkErr.message) {
+            setError(linkErr.message);
+          } else {
+            setError("Error al vincular Github con tu cuenta existente.");
+          }
+        }
+      } else {
+        setError("Esta cuenta ya fue registrada con otro método. Inicia sesión primero y vincula Github desde el perfil.");
+      }
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        // User closed the popup, no show error
+        setError(null);
+      } else {
+        setError("No se pudo iniciar sesión con Github.");
+      }
+    }
   };
 
   return (
@@ -182,13 +260,19 @@ const Login: React.FC<LoginProps> = ({ onGoToRegister, onGoToForgotPassword }) =
             Google
           </button>
           
-          <button type="button" className="btn btn-secondary" onClick={handleFacebookLogin}>
+          {/* <button type="button" className="btn btn-secondary" onClick={handleFacebookLogin}>
              <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43
                     c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328
                     l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
              </svg>
              Facebook
+          </button> */}
+          <button type="button" className="btn btn-secondary"  onClick={handleGithubLogin}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12c0-6.627-5.373-12-12-12zm-2 16h-2v-6h2zm-1-7h-3v6h3z"/>
+            </svg>
+            Github
           </button>
         </div>
 
