@@ -190,7 +190,7 @@ export const api = {
       method: 'POST'
     }),
 
-  signup: (userData: Partial<User>, token?: string) =>
+  signup: (userData: any, token?: string) =>
     http<{ status: string, user: User }>('/auth/signup', {
       method: 'POST',
       headers: token ? { Authorization: `Bearer ${token}` } : {},
