@@ -6,7 +6,8 @@ import { authService } from '../../lib/authService';
 import { api, type Meeting } from '../../lib/api';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import ModalCreateMeeting from '../ModalCreateMeeting/ModalCreateMeeting';
-import ModalJoinMeeting from '../ModalJoinMeeting/ModalJoinMeeting'; // Import new modal
+import ModalJoinMeeting from '../ModalJoinMeeting/ModalJoinMeeting'; 
+import TranscriptionView from '../../components/Transcription/TranscriptionView';
 import { useToast } from '../../context/ToastContext';
 import './Home.scss'; 
 
@@ -14,12 +15,43 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isJoinModalOpen, setIsJoinModalOpen] = useState(false); // State for join modal
+  const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'upcoming' | 'history'>('upcoming');
+  const [viewTranscriptionId, setViewTranscriptionId] = useState<string | null>(null);
+
+  const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean; meetingId: string | null }>({ isOpen: false, meetingId: null });
 
   const { user } = useAuthStore();
+
+  const handleForceEndMeeting = async () => {
+      if (!confirmModal.meetingId) return;
+      
+      const meetingToEnd = meetings.find(m => m.id === confirmModal.meetingId);
+      if (!meetingToEnd) return;
+
+      try {
+          const token = await authService.getIdToken();
+          if (token) {
+              await api.updateMeeting(meetingToEnd.id, { ...meetingToEnd, status: 'ended' }, token);
+              showToast("Reunión finalizada y archivada", "success");
+              fetchMeetings();
+          }
+      } catch (err) { 
+          console.error(err);
+          showToast("Error al finalizar la reunión", "error");
+      } finally {
+          setConfirmModal({ isOpen: false, meetingId: null });
+      }
+  };
+
+  const copyMeetingId = (id: string, e: React.MouseEvent) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(id);
+      showToast("ID copiado al portapapeles", "success");
+  };
 
   const fetchMeetings = async () => {
     if (!user || !user.uid) return;
@@ -82,6 +114,17 @@ const Home: React.FC = () => {
       navigate(`/meeting/${id}`);
   }
 
+  const filteredMeetings = meetings.filter(m => {
+      // Debug logs
+      console.log(`Filtering meeting ${m.id} (${m.title}): status=${m.status}, tab=${activeTab}`);
+      
+      if (activeTab === 'upcoming') {
+          return m.status !== 'ended' && m.status !== 'cancelled';
+      } else {
+          return m.status === 'ended' || m.status === 'cancelled';
+      }
+  });
+
   return (
     <DashboardLayout title={`Hola, ${user?.firstName || 'Usuario'} 👋`} subtitle="¿Qué te gustaría hacer hoy?">
         
@@ -112,7 +155,20 @@ const Home: React.FC = () => {
 
         {/* Meetings List */}
         <div className="meetings-section-title">
-            <span>Próximas Reuniones</span>
+            <div className="tabs">
+                <button 
+                    className={`tab-btn ${activeTab === 'upcoming' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('upcoming')}
+                >
+                    Próximas Reuniones
+                </button>
+                <button 
+                    className={`tab-btn ${activeTab === 'history' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('history')}
+                >
+                    Historial
+                </button>
+            </div>
             <button className="btn btn-ghost btn-icon" onClick={fetchMeetings} title="Actualizar">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
             </button>
@@ -124,19 +180,29 @@ const Home: React.FC = () => {
             <div style={{textAlign: 'center', padding: 20, color: 'var(--error)', background: '#fff0f0', borderRadius: 8}}>
                 {error} <button onClick={fetchMeetings} style={{textDecoration: 'underline', marginLeft: 8, background:'none', border:'none', cursor:'pointer', color:'inherit'}}>Reintentar</button>
             </div>
-        ) : meetings.length === 0 ? (
+        ) : filteredMeetings.length === 0 ? (
             <div className="empty-state">
                 <div className="empty-icon">📅</div>
-                <h3>Sin reuniones programadas</h3>
-                <p>Crea una nueva reunión para empezar.</p>
+                <h3>{activeTab === 'upcoming' ? 'Sin reuniones programadas' : 'No hay historial de reuniones'}</h3>
+                {activeTab === 'upcoming' && <p>Crea una nueva reunión para empezar.</p>}
             </div>
         ) : (
             <div className="meetings-grid">
-                {meetings.map(meeting => (
-                    <div className="meeting-card-modern" key={meeting.id}>
+                {filteredMeetings.map(meeting => (
+                    <div className={`meeting-card-modern ${meeting.status === 'ended' ? 'ended' : ''}`} key={meeting.id}>
                         <div className="card-header">
                             <h4>{meeting.title}</h4>
-                            <span className="meeting-id-badge">ID: {meeting.id.slice(0,8)}...</span>
+                            <span 
+                                className={`meeting-id-badge status-${meeting.status || 'scheduled'}`}
+                                onClick={(e) => copyMeetingId(meeting.id, e)}
+                                title="Copiar ID"
+                                style={{cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4}}
+                            >
+                                {meeting.status === 'ended' ? 'Finalizada' : meeting.status === 'cancelled' ? 'Cancelada' : `ID: ${meeting.id.slice(0,8)}...`}
+                                {meeting.status !== 'ended' && meeting.status !== 'cancelled' && (
+                                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                )}
+                            </span>
                         </div>
                         
                         <div className="card-time">
@@ -147,7 +213,35 @@ const Home: React.FC = () => {
                         </div>
                         
                         <div className="card-actions">
-                            <button className="btn btn-primary" onClick={() => handleAccessMeeting(meeting.id)}>Iniciar</button>
+                            {activeTab === 'upcoming' ? (
+                                <>
+                                    <button className="btn btn-primary" onClick={() => handleAccessMeeting(meeting.id)}>
+                                        {meeting.status === 'active' ? 'Unirse ahora' : 'Iniciar'}
+                                    </button>
+                                    {meeting.createdBy === user?.uid && (
+                                        <button 
+                                            className="btn btn-secondary" 
+                                            style={{maxWidth: '40px', padding: '0 8px'}}
+                                            title="Finalizar y archivar"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setConfirmModal({ isOpen: true, meetingId: meeting.id });
+                                            }}
+                                        >
+                                            🏁
+                                        </button>
+                                    )}
+                                </>
+                            ) : (
+                                <>
+                                    {meeting.status === 'ended' && (
+                                        <button className="btn btn-secondary" onClick={() => setViewTranscriptionId(meeting.id)}>
+                                            Ver Transcripción
+                                        </button>
+                                    )}
+                                    {meeting.status === 'cancelled' && <span className="cancelled-label">Cancelada</span>}
+                                </>
+                            )}
                         </div>
                     </div>
                 ))}
@@ -156,6 +250,34 @@ const Home: React.FC = () => {
 
       {isCreateModalOpen && <ModalCreateMeeting onClose={() => setIsCreateModalOpen(false)} onCreate={handleCreateMeeting} />}
       {isJoinModalOpen && <ModalJoinMeeting onClose={() => setIsJoinModalOpen(false)} onJoin={handleJoinMeeting} />}
+      
+      {viewTranscriptionId && (
+        <TranscriptionView 
+            meetingId={viewTranscriptionId} 
+            meetingTitle={meetings.find(m => m.id === viewTranscriptionId)?.title || 'Reunión'}
+            onClose={() => setViewTranscriptionId(null)} 
+        />
+      )}
+
+      {/* Custom Confirmation Modal */}
+      {confirmModal.isOpen && (
+        <div className="modal-overlay" style={{zIndex: 2002}}>
+          <div className="modal-card" style={{maxWidth: 320}}>
+            <div className="modal-header">
+              <h3>Archivar Reunión</h3>
+            </div>
+            <p style={{padding: '0 24px', color: '#444746'}}>
+                ¿Estás seguro de que quieres finalizar y archivar esta reunión?
+                <br/><br/>
+                <small>Esto moverá la reunión al historial y no se podrá volver a iniciar.</small>
+            </p>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setConfirmModal({ isOpen: false, meetingId: null })}>Cancelar</button>
+              <button className="btn btn-primary" onClick={handleForceEndMeeting}>Confirmar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 };
