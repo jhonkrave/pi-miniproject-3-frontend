@@ -82,8 +82,14 @@ class StreamService {
 
     // If there's a custom TURN server configuration
     if (iceServerUrl) {
+      let validIceServerUrl = iceServerUrl;
+      // Ensure the URL has a valid scheme if missing (e.g. "turn:")
+      if (!validIceServerUrl.startsWith('stun:') && !validIceServerUrl.startsWith('turn:')) {
+          validIceServerUrl = `turn:${validIceServerUrl}`;
+      }
+
       const turnServer: RTCIceServer = {
-        urls: iceServerUrl
+        urls: validIceServerUrl
       };
 
       if (iceServerUsername && iceServerCredential) {

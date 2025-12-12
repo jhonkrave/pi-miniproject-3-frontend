@@ -33,60 +33,67 @@ export interface MeetingPayload {
   maxParticipants?: number;
 }
 
+export interface TranscriptionSegment {
+    timestamp: string;
+    speaker: string;
+    text: string;
+}
+
+// Helper types for backend responses
+interface WrapperResponse<T> {
+  data?: T;
+  success?: boolean;
+  message?: string;
+  error?: string;
+}
+
+type BackendResponse<T> = T | WrapperResponse<T>;
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 function buildUrl(path: string): string {
   return `${API_BASE_URL}${path.startsWith('/') ? path : '/' + path}`;
 }
 
-function normalizeUser(backendUser: any): User {
+function normalizeUser(backendUser: User | WrapperResponse<User>): User {
     if (!backendUser) throw new Error("User data is required");
-    // Handle backend response wrapper { success: true, data: { ... } }
-    const userData = backendUser.data || backendUser;
     
+    // Check if it's a wrapper response
+    const userData = (backendUser as WrapperResponse<User>).data || (backendUser as User);
+    
+    if (!userData) throw new Error("User data format is invalid");
+
+    // Ensure we return a valid User object even if backend sends partial data
     return {
-        uid: userData.uid || userData.id,
-        email: userData.email,
+        uid: userData.uid || 'unknown',
+        email: userData.email || '',
         displayName: userData.displayName || `${userData.firstName || ''} ${userData.lastName || ''}`.trim(),
         photoURL: userData.photoURL,
         firstName: userData.firstName,
         lastName: userData.lastName,
         age: userData.age,
-        createdAt: userData.createdAt
+        createdAt: userData.createdAt,
+        metadata: userData.metadata
     };
 }
 
 /**
  * Generic HTTP client function for making API requests
- * 
- * Performs HTTP requests to the backend API with automatic error handling,
- * timeout management, and request/response logging for password-related endpoints.
- * 
- * Features:
- * - Automatic timeout handling (60s for password endpoints, 15s for others)
- * - Request abort controller for timeout cancellation
- * - Detailed logging for password-related endpoints
- * - Error message extraction from API responses
- * - Support for 204 No Content responses
- * - CORS-friendly credentials handling
- * 
- * @template T - Expected return type
- * @param {string} path - API endpoint path
- * @param {RequestInit} [init] - Fetch API request options (method, headers, body, etc.)
- * @returns {Promise<T>} Promise resolving to the response data
- * @throws {Object} Error object with `status` and `message` properties
  */
 async function http<T>(path: string, init?: RequestInit): Promise<T> {
   const url = buildUrl(path);
   const method = (init?.method || 'GET').toString();
-  const shouldDebug = true; // Force debug to see errors
+  const shouldDebug = true;
   const startedAt = Date.now();
+
   if (shouldDebug) {
-    // eslint-disable-next-line no-console
     console.log('[api:http] ->', method, url);
   }
+  
   const controller = new AbortController();
-  const timeoutMs = path.includes('/auth/password/') ? 60000 : 15000;
+  // Increase timeout for transcription uploads (audio files can be large)
+  const isUpload = path.includes('/transcription') && method === 'POST';
+  const timeoutMs = (path.includes('/auth/password/') || isUpload) ? 120000 : 15000;
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
   
   // Prepare headers
@@ -94,11 +101,12 @@ async function http<T>(path: string, init?: RequestInit): Promise<T> {
     ...(init?.headers || {})
   };
   
-  // Only add Content-Type if it's not a GET/HEAD request and body exists or needed
+  // Only add Content-Type if it's not a GET/HEAD request
   if (method !== 'GET' && method !== 'HEAD') {
-    // If Content-Type is not already set by caller (like for FormData which sets it automatically with boundary)
-    if (!(headers as any)['Content-Type']) {
-        (headers as any)['Content-Type'] = 'application/json';
+    // Cast to Record to check property existence safely
+    const headerRecord = headers as Record<string, string>;
+    if (!headerRecord['Content-Type'] && !(init?.body instanceof FormData)) {
+        headerRecord['Content-Type'] = 'application/json';
     }
   }
 
@@ -106,36 +114,32 @@ async function http<T>(path: string, init?: RequestInit): Promise<T> {
   try {
     res = await fetch(url, {
       method: init?.method || 'GET',
-      // Avoid sending cookies for public endpoints to reduce CORS/preflight issues
-      // Password endpoints are public and don't require credentials
       credentials: path.includes('/auth/password/') ? 'omit' : 'include',
       signal: controller.signal,
       body: init?.body,
       headers: headers,
     });
-  } catch (err) {
+  } catch (err: unknown) {
     clearTimeout(timeoutId);
     if (shouldDebug) {
-      // eslint-disable-next-line no-console
-      console.error('[api:http] network error <-', (err as any)?.message || err);
+      console.error('[api:http] network error <-', (err as Error)?.message || err);
     }
-    // Handle network errors or timeouts
+    const errorObj = err as { name?: string };
     throw {
       status: 0,
-      message: (err as any)?.name === 'AbortError' ? 'Tiempo de espera agotado' : 'Error de red'
-    } as { status: number; message: string };
+      message: errorObj?.name === 'AbortError' ? 'Tiempo de espera agotado' : 'Error de red'
+    };
   }
+  
   clearTimeout(timeoutId);
+  
   if (shouldDebug) {
-    // eslint-disable-next-line no-console
     console.log('[api:http] <-', res.status, res.statusText, `${Date.now() - startedAt}ms`);
   }
-  // Check for error status codes (accepts 2xx including 202 Accepted)
+
   if (res.status < 200 || res.status >= 300) {
-    // Try to extract error message from response body
     let message = 'Error inesperado';
     try {
-      // Read text once to avoid "stream already read" error
       const textBody = await res.text();
       try {
         const data = JSON.parse(textBody);
@@ -143,30 +147,34 @@ async function http<T>(path: string, init?: RequestInit): Promise<T> {
         if (data?.message) message = data.message;
         if (data?.error) message += ` (${data.error})`;
       } catch {
-        // No es JSON válido
         console.error('[api:http] error text:', textBody);
-        // HTML error pages from Express often contain <pre>Cannot PUT ...</pre>
         if (textBody.includes('Cannot')) message = 'Ruta no encontrada en el servidor (404)';
       }
     } catch (e) {
       console.error('[api:http] Failed to read error body', e);
     }
-    throw { status: res.status, message } as { status: number; message: string };
+    throw { status: res.status, message };
   }
 
-  // Handle 204 No Content responses
   if (res.status === 204) return undefined as unknown as T;
+  
   try {
     const json = (await res.json()) as T;
     if (shouldDebug) {
-      // eslint-disable-next-line no-console
       console.log('[api:http] body <-', json);
     }
     return json;
   } catch {
-    // No JSON body (e.g., 204), just return undefined
     return undefined as unknown as T;
   }
+}
+
+// Helper to extract data from potential wrapper
+function extractData<T>(res: BackendResponse<T>): T {
+    if (res && typeof res === 'object' && 'data' in res) {
+        return (res as WrapperResponse<T>).data as T;
+    }
+    return res as T;
 }
 
 export const api = {
@@ -182,7 +190,7 @@ export const api = {
       method: 'POST'
     }),
 
-  signup: (userData: any, token?: string) =>
+  signup: (userData: Partial<User>, token?: string) =>
     http<{ status: string, user: User }>('/auth/signup', {
       method: 'POST',
       headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -192,14 +200,13 @@ export const api = {
   // Users
   getProfile: async (uid: string, token: string) => {
     try {
-        // Intento con /auth/ primero, si falla probamos /users/ por compatibilidad
-        // Pero según logs, el router base es /auth
-        const userResponse = await http<any>(`/auth/${uid}`, {
+        const userResponse = await http<BackendResponse<User>>(`/auth/${uid}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         return normalizeUser(userResponse);
-    } catch (error) {
-        if ((error as any).status === 404) {
+    } catch (error: unknown) {
+        const err = error as { status?: number };
+        if (err.status === 404) {
             throw error; 
         }
         throw error;
@@ -207,7 +214,7 @@ export const api = {
   },
 
   updateProfile: async (uid: string, data: Partial<User>, token: string) => {
-    const userResponse = await http<any>(`/auth/${uid}`, {
+    const userResponse = await http<BackendResponse<User>>(`/auth/${uid}`, {
       method: 'PUT',
       headers: { Authorization: `Bearer ${token}` },
       body: JSON.stringify(data)
@@ -223,52 +230,57 @@ export const api = {
 
   // Meetings
   getMeetings: async (token: string): Promise<Meeting[]> => {
-    const res = await http<any>('/meetings', {
+    const res = await http<BackendResponse<Meeting[]>>('/meetings', {
       headers: { Authorization: `Bearer ${token}` }
     });
-    // Handle backend response wrapper { success: true, data: [...] }
-    if (res && res.data && Array.isArray(res.data)) {
-        return res.data;
-    }
-    // Handle direct array response (fallback)
-    if (Array.isArray(res)) {
-        return res;
+    
+    const data = extractData(res);
+    if (Array.isArray(data)) {
+        return data;
     }
     return [];
   },
 
   createMeeting: async (data: MeetingPayload, token: string): Promise<Meeting> => {
-    const res = await http<any>('/meetings', {
+    const res = await http<BackendResponse<Meeting>>('/meetings', {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
       body: JSON.stringify(data)
     });
-    // Handle backend response wrapper { success: true, data: { ... } }
-    if (res && res.data) {
-        return res.data;
-    }
-    return res;
+    return extractData(res);
   },
 
   getMeetingById: async (id: string, token: string): Promise<Meeting> => {
-    const res = await http<any>(`/meetings/${id}`, {
+    const res = await http<BackendResponse<Meeting>>(`/meetings/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
-    if (res && res.data) {
-        return res.data;
-    }
-    return res;
+    return extractData(res);
+  },
+
+  getMeetingTranscription: async (id: string, token: string): Promise<TranscriptionSegment[] | string> => {
+      const res = await http<BackendResponse<TranscriptionSegment[] | string>>(`/meetings/${id}/transcription`, {
+          headers: { Authorization: `Bearer ${token}` }
+      });
+      return extractData(res);
+  },
+
+  uploadMeetingRecording: async (id: string, audioBlob: Blob, token: string): Promise<void> => {
+    const formData = new FormData();
+    formData.append('file', audioBlob, 'recording.webm');
+    
+    await http<void>(`/meetings/${id}/transcription`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+    });
   },
 
   updateMeeting: async (id: string, data: Partial<Meeting>, token: string): Promise<Meeting> => {
-    const res = await http<any>(`/meetings/${id}`, {
+    const res = await http<BackendResponse<Meeting>>(`/meetings/${id}`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` },
         body: JSON.stringify(data)
     });
-    if (res && res.data) {
-        return res.data;
-    }
-    return res;
+    return extractData(res);
   },
 };
